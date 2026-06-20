@@ -1,0 +1,86 @@
+aid: contextual-ai
+name: Contextual AI
+review:
+  question: Does Contextual AI expose a documented public WebSocket API?
+  answer: false
+  date: '2026-06-20'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: true
+  asyncapiScopeNote: |
+    Per updated API Evangelist scope (2026-05-29), HTTP Server-Sent Events
+    (SSE) is in-scope for AsyncAPI modeling. An AsyncAPI 2.6 document was
+    created at asyncapi/contextual-ai-asyncapi.yml describing the agent query
+    SSE stream (POST /agents/{agent_id}/query with stream=true). No WebSocket
+    surface was modeled because none is documented.
+findings:
+  summary: |
+    Contextual AI does not publish a documented public WebSocket API. The
+    platform exposes only REST (HTTPS) endpoints under
+    https://api.contextual.ai/v1, authenticated with a Bearer API key.
+    Streaming for agent queries is delivered as HTTP Server-Sent Events (SSE)
+    via the `stream: true` parameter on the REST query endpoint; SSE is a
+    one-way HTTP streaming transport and is not WebSocket. The standalone
+    component APIs (Generate, Rerank, Parse, LMUnit) return single JSON HTTP
+    responses; Parse is asynchronous via job polling, not WebSocket. No
+    realtime, bidirectional WebSocket (ws:// or wss://) endpoint is documented.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.contextual.ai/v1
+      documented: true
+    - protocol: SSE
+      scheme: https
+      note: Server-Sent Events delivered over the same REST agent query endpoint when stream=true. Not WebSocket.
+      documented: true
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented in Contextual AI's API reference as of the review date.
+  endpointsConfirmedRest:
+    - POST   https://api.contextual.ai/v1/agents
+    - GET    https://api.contextual.ai/v1/agents
+    - GET    https://api.contextual.ai/v1/agents/{agent_id}
+    - PATCH  https://api.contextual.ai/v1/agents/{agent_id}
+    - DELETE https://api.contextual.ai/v1/agents/{agent_id}
+    - POST   https://api.contextual.ai/v1/agents/{agent_id}/query
+    - POST   https://api.contextual.ai/v1/agents/{agent_id}/feedback
+    - POST   https://api.contextual.ai/v1/datastores
+    - GET    https://api.contextual.ai/v1/datastores
+    - GET    https://api.contextual.ai/v1/datastores/{datastore_id}
+    - DELETE https://api.contextual.ai/v1/datastores/{datastore_id}
+    - POST   https://api.contextual.ai/v1/datastores/{datastore_id}/documents
+    - GET    https://api.contextual.ai/v1/datastores/{datastore_id}/documents
+    - DELETE https://api.contextual.ai/v1/datastores/{datastore_id}/documents/{document_id}
+    - POST   https://api.contextual.ai/v1/generate
+    - POST   https://api.contextual.ai/v1/rerank
+    - POST   https://api.contextual.ai/v1/parse
+    - GET    https://api.contextual.ai/v1/parse/jobs/{job_id}/status
+    - GET    https://api.contextual.ai/v1/parse/jobs/{job_id}/results
+    - GET    https://api.contextual.ai/v1/parse/jobs
+    - POST   https://api.contextual.ai/v1/lmunit
+    - GET    https://api.contextual.ai/v1/users
+sources:
+  - url: https://docs.contextual.ai/api-reference/
+    type: APIReference
+    note: All documented endpoints are HTTPS REST under https://api.contextual.ai/v1; no WebSocket mentioned.
+  - url: https://docs.contextual.ai/api-reference/agents-query/query
+    type: Documentation
+    note: Agent query streaming uses stream=true delivering Server-Sent Events over HTTPS, not WebSocket.
+  - url: https://docs.contextual.ai/api-reference/parse/parse-file
+    type: Documentation
+    note: Parse is asynchronous via job_id status/results polling over REST; no WebSocket.
+  - url: https://contextual.ai/platform/component-apis/
+    type: Documentation
+    note: Generate, Rerank, Parse, LMUnit component APIs return JSON HTTP responses.
+actions:
+  asyncapiPath: asyncapi/contextual-ai-asyncapi.yml
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists. Under the updated 2026-05-29 scope
+    that allows SSE in AsyncAPI, an AsyncAPI 2.6 document was authored for the
+    agent query SSE stream, with HTTP+SSE transport documented explicitly
+    throughout the spec (server protocol, channel bindings,
+    info.x-transport-notes) so SSE is never misrepresented as WebSocket.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

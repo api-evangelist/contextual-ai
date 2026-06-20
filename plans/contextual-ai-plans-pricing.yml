@@ -1,0 +1,146 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Contextual AI
+providerId: contextual-ai
+created: '2026-06-20'
+modified: '2026-06-20'
+reconciled: false
+tags:
+- AI
+- RAG
+- LLM
+- Grounded Language Model
+- Enterprise
+- Plans
+description: >-
+  Contextual AI offers an on-demand, pay-as-you-go tier for the standalone
+  Component APIs (Parse, Rerank, Generate, LMUnit) with published usage-based
+  rates, plus an Enterprise tier with custom, sales-led pricing for the full
+  RAG agent platform, dedicated deployments, security, and support. The
+  end-to-end agent platform (agents, datastores, query) is sales-led; per-call
+  pricing is public only for the standalone component APIs. New accounts
+  receive $25 in free credits.
+notes: >-
+  Component API rates captured from the public pricing page on 2026-06-20:
+  Parse - Basic (text-only) $3 / 1,000 pages, Standard (multimodal) $40 /
+  1,000 pages; Rerank - rerank-v2 $0.05 / 1M tokens, rerank-v2-mini $0.02 /
+  1M tokens; Generate - input $3 / 1M tokens, output $15 / 1M tokens;
+  LMUnit - input $3 / 1M tokens. Full RAG agent platform pricing is
+  enterprise/contract and not publicly reconciled. Verify current rates on
+  the pricing page during reconciliation.
+sources:
+- https://contextual.ai/platform/pricing/
+- https://contextual.ai/platform/component-apis/
+- https://docs.contextual.ai
+plans:
+- id: contextual-ai-on-demand
+  name: On-Demand (Pay-as-you-go)
+  type: usage
+  description: >-
+    Usage-metered access to the standalone Component APIs with published
+    per-page and per-token rates and no monthly minimum. Includes $25 in
+    free credits for new accounts.
+  entries:
+  - label: Parse - Basic (text only)
+    name: parse_basic
+    type: usage
+    metric: pages
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000
+    price: $3 per 1,000 pages
+    userMultiplied: false
+  - label: Parse - Standard (multimodal)
+    name: parse_standard
+    type: usage
+    metric: pages
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000
+    price: $40 per 1,000 pages
+    userMultiplied: false
+  - label: Rerank v2
+    name: rerank_v2
+    type: usage
+    metric: tokens
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000000
+    price: $0.05 per 1M tokens
+    userMultiplied: false
+  - label: Rerank v2 Mini
+    name: rerank_v2_mini
+    type: usage
+    metric: tokens
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000000
+    price: $0.02 per 1M tokens
+    userMultiplied: false
+  - label: Generate (GLM)
+    name: generate
+    type: usage
+    metric: tokens
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000000
+    price: $3 input / $15 output per 1M tokens
+    userMultiplied: false
+  - label: LMUnit
+    name: lmunit
+    type: usage
+    metric: tokens
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1000000
+    price: $3 per 1M input tokens
+    userMultiplied: false
+  - label: Free Credits
+    name: free_credits
+    type: free
+    metric: credits
+    limit: 25
+    timeFrame: lifetime
+    geo: global
+    unit: 1
+    price: $25 in free credits for new accounts
+    userMultiplied: false
+  elements:
+  - name: Parse
+  - name: Rerank
+  - name: Generate
+  - name: LMUnit
+- id: contextual-ai-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Custom, sales-led pricing for the full enterprise RAG agent platform -
+    agents, datastores, query, fine-tuning, dedicated deployment, security,
+    and support with negotiated terms. Contact Contextual AI sales.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: RAG Agents
+  - name: Datastores
+  - name: Agent Query
+  - name: Dedicated Deployment
+  - name: Custom Volume Pricing
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

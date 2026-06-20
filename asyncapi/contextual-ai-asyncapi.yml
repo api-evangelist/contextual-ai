@@ -1,0 +1,221 @@
+asyncapi: '2.6.0'
+id: 'urn:ai:contextual:v1:agent-query:sse'
+info:
+  title: Contextual AI Agent Query Streaming (HTTP + SSE)
+  version: '1.0.0'
+  description: |
+    AsyncAPI 2.6 description of Contextual AI's **agent query streaming**
+    surface.
+
+    Contextual AI does not publish a WebSocket API. The only asynchronous /
+    event-style transport documented at
+    https://docs.contextual.ai/api-reference/agents-query/query is **HTTP
+    Server-Sent Events (SSE)** delivered over the same REST endpoint
+    (`POST /agents/{agent_id}/query`) when the request body sets
+    `stream: true`. SSE is a one-way, server-to-client HTTP streaming
+    channel; it is **not** WebSocket.
+
+    This AsyncAPI document models only the streamed events emitted by the
+    SSE response (token deltas, attribution / retrieval events, and a final
+    completion event). The request body itself (messages, stream, filters,
+    overrides) is modeled in the companion OpenAPI document at
+    `openapi/contextual-ai-openapi.yml`.
+
+    The standalone Generate, Rerank, Parse, and LMUnit component APIs return
+    single JSON HTTP responses and are **not** SSE-streamed; they are not
+    modeled here.
+  contact:
+    name: API Evangelist
+    email: kin@apievangelist.com
+    url: https://apievangelist.com
+  license:
+    name: API documentation - Contextual AI Terms of Service
+    url: https://contextual.ai/terms-of-service/
+  x-transport-notes:
+    transport: HTTP Server-Sent Events (SSE)
+    protocol: https
+    direction: server-to-client (one-way)
+    mediaType: text/event-stream
+    triggeredBy: 'POST https://api.contextual.ai/v1/agents/{agent_id}/query with request body { "stream": true }'
+    notWebSocket: true
+    source: https://docs.contextual.ai/api-reference/agents-query/query
+defaultContentType: text/event-stream
+servers:
+  contextual:
+    url: api.contextual.ai/v1
+    protocol: https
+    description: |
+      Contextual AI's REST base. Agent query streaming is delivered as HTTP
+      Server-Sent Events over this base when `stream: true` is set on the JSON
+      request body. AsyncAPI 2.6 does not define a dedicated SSE protocol
+      identifier; `https` is used here and the SSE transport is documented in
+      `info.x-transport-notes` and on each channel.
+    security:
+      - bearerAuth: []
+channels:
+  /agents/{agent_id}/query:
+    description: |
+      Agent query SSE stream. The client opens this channel by issuing
+      `POST /agents/{agent_id}/query` with `Content-Type: application/json`
+      and a JSON body containing `stream: true`. The server responds with
+      `Content-Type: text/event-stream` and emits a sequence of `data:` lines
+      carrying grounded response token deltas, optional attribution and
+      retrieval events, and a final completion event.
+    parameters:
+      agent_id:
+        description: UUID of the agent being queried.
+        schema:
+          type: string
+          format: uuid
+    bindings:
+      http:
+        type: request
+        method: POST
+        bindingVersion: '0.3.0'
+      x-sse:
+        mediaType: text/event-stream
+        eventField: 'data'
+    subscribe:
+      operationId: streamAgentQueryEvents
+      summary: Subscribe to streamed agent query events (SSE).
+      description: |
+        After `POST /agents/{agent_id}/query` is issued with `stream: true`,
+        the server emits an ordered sequence of SSE `data:` events carrying
+        grounded response token deltas, attribution / retrieval events, and a
+        terminal completion event.
+      bindings:
+        http:
+          type: response
+          bindingVersion: '0.3.0'
+      message:
+        oneOf:
+          - $ref: '#/components/messages/MessageDelta'
+          - $ref: '#/components/messages/AttributionEvent'
+          - $ref: '#/components/messages/QueryComplete'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: 'Contextual AI API key'
+      description: |
+        Standard Contextual AI bearer token. Set the
+        `Authorization: Bearer <CONTEXTUAL_API_KEY>` header on the
+        `POST /agents/{agent_id}/query` request that opens the SSE stream.
+  messages:
+    MessageDelta:
+      name: MessageDelta
+      title: Streamed grounded response delta
+      summary: |
+        A single SSE `data:` event carrying one delta of the grounded agent
+        response. Many of these are emitted per request, in order.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/MessageDelta'
+      examples:
+        - name: contentDelta
+          summary: Token delta
+          payload:
+            type: message_delta
+            content: 'The policy'
+            conversation_id: 7c2f4b9a-2d3e-4a1b-9c8d-1e2f3a4b5c6d
+            message_id: a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+    AttributionEvent:
+      name: AttributionEvent
+      title: Streamed attribution / retrieval event
+      summary: |
+        SSE event carrying inline attribution or retrieval-content metadata
+        for the grounded response.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/AttributionEvent'
+      examples:
+        - name: attribution
+          summary: Attribution event
+          payload:
+            type: attribution
+            content_id: f0e1d2c3-b4a5-6789-0a1b-2c3d4e5f6a7b
+            groundedness_score: 0.97
+    QueryComplete:
+      name: QueryComplete
+      title: Stream completion event
+      summary: |
+        Terminal SSE event marking the end of the grounded response stream,
+        carrying the final message identifiers and groundedness scores.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/QueryComplete'
+      examples:
+        - name: done
+          summary: Completion event
+          payload:
+            type: message_complete
+            conversation_id: 7c2f4b9a-2d3e-4a1b-9c8d-1e2f3a4b5c6d
+            message_id: a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+  schemas:
+    MessageDelta:
+      type: object
+      description: A delta of the grounded agent response streamed as an SSE event.
+      required:
+        - type
+        - content
+      properties:
+        type:
+          type: string
+          enum:
+            - message_delta
+          description: The event type for a token delta.
+        content:
+          type: string
+          description: Token slice of the grounded response.
+        conversation_id:
+          type: string
+          format: uuid
+          description: Identifier for continuing the conversation.
+        message_id:
+          type: string
+          format: uuid
+          description: Identifier for this assistant message.
+    AttributionEvent:
+      type: object
+      description: An attribution / retrieval metadata event for the grounded response.
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - attribution
+            - retrieval
+          description: The event type.
+        content_id:
+          type: string
+          format: uuid
+          description: Identifier of the retrieved content the claim is attributed to.
+        groundedness_score:
+          type: number
+          format: double
+          description: Confidence that the associated claim is grounded in the source.
+    QueryComplete:
+      type: object
+      description: Terminal completion event for the agent query SSE stream.
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - message_complete
+          description: Marks the end of the stream.
+        conversation_id:
+          type: string
+          format: uuid
+        message_id:
+          type: string
+          format: uuid
+        groundedness_scores:
+          type: array
+          items:
+            type: number
+            format: double
+          description: Per-claim groundedness scores for the full response.

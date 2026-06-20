@@ -1,0 +1,283 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Agents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/agents",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"system_prompt\": \"<string>\",\n  \"datastore_ids\": []\n}"
+            }
+          },
+          "docs": "Create a new RAG agent. If no datastore is provided, one is created automatically."
+        },
+        {
+          "info": {
+            "name": "List Agents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/agents"
+          },
+          "docs": "Retrieve a list of agents in the workspace."
+        },
+        {
+          "info": {
+            "name": "Get Agent Metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/agents/{{agent_id}}"
+          },
+          "docs": "Get metadata for a single agent."
+        },
+        {
+          "info": {
+            "name": "Delete Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.contextual.ai/v1/agents/{{agent_id}}"
+          },
+          "docs": "Delete an agent."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Agent Query",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Query Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/agents/{{agent_id}}/query",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"messages\": [\n    { \"role\": \"user\", \"content\": \"<string>\" }\n  ],\n  \"stream\": false\n}"
+            }
+          },
+          "docs": "Query an agent for a grounded response with attributions. Set stream=true for SSE."
+        },
+        {
+          "info": {
+            "name": "Provide Feedback",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/agents/{{agent_id}}/feedback",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"message_id\": \"<uuid>\",\n  \"feedback\": \"thumbs_up\"\n}"
+            }
+          },
+          "docs": "Provide feedback on an agent message."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Datastores & Documents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Datastore",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/datastores",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"name\": \"<string>\"\n}"
+            }
+          },
+          "docs": "Create a new datastore."
+        },
+        {
+          "info": {
+            "name": "List Datastores",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/datastores"
+          },
+          "docs": "Retrieve a list of datastores."
+        },
+        {
+          "info": {
+            "name": "Ingest Document",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/datastores/{{datastore_id}}/documents",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            }
+          },
+          "docs": "Ingest a document (PDF, HTML, DOC(X), PPT(X), image) into a datastore."
+        },
+        {
+          "info": {
+            "name": "Delete Datastore",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.contextual.ai/v1/datastores/{{datastore_id}}"
+          },
+          "docs": "Delete a datastore."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Generate",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Generate",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/generate",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"model\": \"v2\",\n  \"messages\": [\n    { \"role\": \"user\", \"content\": \"<string>\" }\n  ],\n  \"knowledge\": [\"<string>\"]\n}"
+            }
+          },
+          "docs": "Generate a grounded response with the Grounded Language Model."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Rerank",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Rerank",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/rerank",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"query\": \"<string>\",\n  \"documents\": [\"<string>\"],\n  \"model\": \"ctxl-rerank-v2-instruct-multilingual\"\n}"
+            }
+          },
+          "docs": "Rerank documents against a query with the instruction-following reranker."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Parse",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Parse File",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/parse",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            }
+          },
+          "docs": "Submit a document to be parsed into AI-ready markdown. Returns a job_id."
+        },
+        {
+          "info": {
+            "name": "Parse Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/parse/jobs/{{job_id}}/status"
+          },
+          "docs": "Get the status of a parse job."
+        },
+        {
+          "info": {
+            "name": "Parse Result",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/parse/jobs/{{job_id}}/results"
+          },
+          "docs": "Retrieve the results of a completed parse job."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "LMUnit",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "LMUnit",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/lmunit",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"query\": \"<string>\",\n  \"response\": \"<string>\",\n  \"unit_test\": \"<string>\"\n}"
+            }
+          },
+          "docs": "Evaluate a model response against a natural-language unit test (score 1-5)."
+        }
+      ]
+    }
+  ]
+}

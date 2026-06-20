@@ -1,0 +1,911 @@
+{
+  "item": [
+    {
+      "id": "cdba0807-49d9-47de-acb4-f9c109282060",
+      "name": "Agents",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f7a040c0-0b9f-4856-9df5-200158bc7a8b",
+          "name": "Create Agent",
+          "request": {
+            "name": "Create Agent",
+            "description": {
+              "content": "Create a new RAG agent.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "agents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\",\n  \"system_prompt\": \"<string>\",\n  \"datastore_ids\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "20b231c6-0e9f-405c-817c-5b6e86b46d4c",
+          "name": "List Agents",
+          "request": {
+            "name": "List Agents",
+            "description": {
+              "content": "Retrieve a list of agents.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "agents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "9c456a00-f486-4172-badf-99db3c98c392",
+          "name": "Get Agent Metadata",
+          "request": {
+            "name": "Get Agent Metadata",
+            "description": {
+              "content": "Get metadata for a single agent.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "agents",
+                ":agent_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "f8420244-dbd9-4dcd-9d48-56b184d51a74",
+          "name": "Edit Agent",
+          "request": {
+            "name": "Edit Agent",
+            "description": {
+              "content": "Edit an agent's configuration.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "agents",
+                ":agent_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"system_prompt\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "62eab8aa-6ac9-4a31-ad32-130ebe69ed6d",
+          "name": "Delete Agent",
+          "request": {
+            "name": "Delete Agent",
+            "description": {
+              "content": "Delete an agent.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "agents",
+                ":agent_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "d0b930bc-195a-4824-b96c-d616b71bc59c",
+      "name": "Agent Query",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "da149857-94df-4ad8-819b-affe47d949d6",
+          "name": "Query Agent",
+          "request": {
+            "name": "Query Agent",
+            "description": {
+              "content": "Query an agent for a grounded response. Set stream=true for SSE.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "agents",
+                ":agent_id",
+                "query"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"<string>\"\n    }\n  ],\n  \"stream\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "81a6cf5d-efb1-4fa3-84d0-5fb1cb94c502",
+          "name": "Provide Feedback",
+          "request": {
+            "name": "Provide Feedback",
+            "description": {
+              "content": "Provide feedback on an agent message.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "agents",
+                ":agent_id",
+                "feedback"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message_id\": \"<uuid>\",\n  \"feedback\": \"thumbs_up\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "aea8a899-063e-4a0f-9c4e-74c7cb113f39",
+      "name": "Datastores & Documents",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ffdd424c-4dbc-4459-910d-f4af1ea9fe9d",
+          "name": "Create Datastore",
+          "request": {
+            "name": "Create Datastore",
+            "description": {
+              "content": "Create a new datastore.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "datastores"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "bceb151a-c7b4-46c8-9b06-4d728944b166",
+          "name": "List Datastores",
+          "request": {
+            "name": "List Datastores",
+            "description": {
+              "content": "Retrieve a list of datastores.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "datastores"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "dd917129-8468-4584-b1a7-9987a0af5218",
+          "name": "Get Datastore Metadata",
+          "request": {
+            "name": "Get Datastore Metadata",
+            "description": {
+              "content": "Get metadata for a datastore.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "datastores",
+                ":datastore_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "476c26e5-1350-4857-9fea-5c71ef38b8aa",
+          "name": "Ingest Document",
+          "request": {
+            "name": "Ingest Document",
+            "description": {
+              "content": "Ingest a document into a datastore.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "datastores",
+                ":datastore_id",
+                "documents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "metadata",
+                  "type": "text",
+                  "value": "<string>"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "9d10de0e-fc79-4985-93a9-49133e4356ea",
+          "name": "List Documents",
+          "request": {
+            "name": "List Documents",
+            "description": {
+              "content": "List documents in a datastore.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "datastores",
+                ":datastore_id",
+                "documents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "d31a3b46-4c3f-4d61-a817-96a1aba626dc",
+          "name": "Delete Datastore",
+          "request": {
+            "name": "Delete Datastore",
+            "description": {
+              "content": "Delete a datastore.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "datastores",
+                ":datastore_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "f7a68b50-6930-481b-9ee8-a2c61c765bf0",
+      "name": "Generate",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ded3f84c-156d-4a13-a19d-6d67a34aca4c",
+          "name": "Generate",
+          "request": {
+            "name": "Generate",
+            "description": {
+              "content": "Generate a grounded response with the GLM.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "generate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"v2\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"<string>\"\n    }\n  ],\n  \"knowledge\": [\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "6227e45f-f5d5-45f1-8229-d7ce7d7e5326",
+      "name": "Rerank",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "061022df-e16f-4c08-b2e9-80659bbbe8a3",
+          "name": "Rerank",
+          "request": {
+            "name": "Rerank",
+            "description": {
+              "content": "Rerank documents against a query.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "rerank"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"<string>\",\n  \"documents\": [\n    \"<string>\"\n  ],\n  \"model\": \"ctxl-rerank-v2-instruct-multilingual\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "37283710-fd63-45a0-8613-75040640d39f",
+      "name": "Parse",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "24436d41-0fd6-4a2a-9ab3-91ad1aac8e52",
+          "name": "Parse File",
+          "request": {
+            "name": "Parse File",
+            "description": {
+              "content": "Submit a document to parse. Returns a job_id.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "parse"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "raw_file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "parse_mode",
+                  "type": "text",
+                  "value": "standard"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "4d52474b-f3a5-4444-94fc-ca9081815d56",
+          "name": "Parse Status",
+          "request": {
+            "name": "Parse Status",
+            "description": {
+              "content": "Get parse job status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "parse",
+                "jobs",
+                ":job_id",
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "f4f99acf-f1a1-49d7-8b7d-04762ab00190",
+          "name": "Parse Result",
+          "request": {
+            "name": "Parse Result",
+            "description": {
+              "content": "Retrieve parse job results.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "parse",
+                "jobs",
+                ":job_id",
+                "results"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "16ddd270-2037-4258-9a94-c24b9ad63f81",
+          "name": "Parse List Jobs",
+          "request": {
+            "name": "Parse List Jobs",
+            "description": {
+              "content": "List parse jobs.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "parse",
+                "jobs"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "b6a8f815-b173-4766-9796-df592d4d17ff",
+      "name": "LMUnit",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d4ddb7da-b796-4912-8162-1a9f11b616ce",
+          "name": "LMUnit",
+          "request": {
+            "name": "LMUnit",
+            "description": {
+              "content": "Evaluate a response against a natural-language unit test.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "lmunit"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"<string>\",\n  \"response\": \"<string>\",\n  \"unit_test\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "c91aa696-fd89-41c0-a05e-3db5462cb84c",
+      "name": "Users",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d5831915-e534-4202-954b-fc98bff8f4e2",
+          "name": "Get Users",
+          "request": {
+            "name": "Get Users",
+            "description": {
+              "content": "List workspace users.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "users"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        },
+        {
+          "id": "02a9479c-2dea-44f0-927b-3c9c3db5d651",
+          "name": "Invite Users",
+          "request": {
+            "name": "Invite Users",
+            "description": {
+              "content": "Invite users to the workspace.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "users",
+                "invite"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emails\": [\n    \"<email>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {}
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.contextual.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "e82bf160-224e-4381-800c-798bab41768d",
+    "name": "Contextual AI Platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Contextual AI enterprise RAG platform.\n\nContact Support:\n Name: Contextual AI Support\n Email: support@contextual.ai",
+      "type": "text/plain"
+    }
+  }
+}

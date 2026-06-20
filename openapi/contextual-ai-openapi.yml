@@ -1,0 +1,1046 @@
+openapi: 3.0.1
+info:
+  title: Contextual AI Platform API
+  description: >-
+    REST API for the Contextual AI enterprise RAG platform. Provides agents
+    (create / query grounded RAG agents), datastores and documents (ingest and
+    manage the knowledge corpus), and standalone component APIs - Generate
+    (grounded generation with the GLM), Rerank (instruction-following reranker),
+    Parse (document parsing into AI-ready markdown), and LMUnit (natural-language
+    unit-test evaluation). All endpoints authenticate with a Bearer API key.
+  termsOfService: https://contextual.ai/terms-of-service/
+  contact:
+    name: Contextual AI Support
+    url: https://docs.contextual.ai
+    email: support@contextual.ai
+  version: '1.0'
+servers:
+  - url: https://api.contextual.ai/v1
+    description: Contextual AI production API
+security:
+  - bearerAuth: []
+tags:
+  - name: Agents
+    description: Create, configure, and manage RAG agents.
+  - name: Agents Query
+    description: Query agents for grounded responses, retrievals, metrics, and feedback.
+  - name: Datastores
+    description: Create and manage datastores that hold ingested knowledge.
+  - name: Documents
+    description: Ingest and manage documents within a datastore.
+  - name: Generate
+    description: Grounded generation with the Grounded Language Model (GLM).
+  - name: Rerank
+    description: Instruction-following reranking of retrieved passages.
+  - name: Parse
+    description: Parse documents into structured, AI-ready markdown.
+  - name: LMUnit
+    description: Evaluate model responses with natural-language unit tests.
+  - name: Users
+    description: Manage workspace users.
+paths:
+  /agents:
+    post:
+      operationId: createAgent
+      tags:
+        - Agents
+      summary: Create Agent
+      description: >-
+        Create a new RAG agent. If no datastore_ids are supplied, a new
+        datastore is created automatically and associated with the agent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgentRequest'
+      responses:
+        '200':
+          description: Agent created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAgentResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    get:
+      operationId: listAgents
+      tags:
+        - Agents
+      summary: List Agents
+      description: Retrieve a list of agents in the workspace, with cursor-based pagination.
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Cursor from a previous list response for pagination.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+          description: Maximum number of agents to return.
+      responses:
+        '200':
+          description: A list of agents.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAgentsResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /agents/{agent_id}:
+    get:
+      operationId: getAgentMetadata
+      tags:
+        - Agents
+      summary: Get Agent Metadata
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+      responses:
+        '200':
+          description: Agent metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    patch:
+      operationId: editAgent
+      tags:
+        - Agents
+      summary: Edit Agent
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditAgentRequest'
+      responses:
+        '200':
+          description: Agent updated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: deleteAgent
+      tags:
+        - Agents
+      summary: Delete Agent
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+      responses:
+        '200':
+          description: Agent deleted.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /agents/{agent_id}/query:
+    post:
+      operationId: queryAgent
+      tags:
+        - Agents Query
+      summary: Query Agent
+      description: >-
+        Send a conversation to an agent and receive a grounded response with
+        attributions, retrieval contents, and groundedness scores. Set
+        stream=true to receive a Server-Sent Events token stream.
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+        - name: retrievals_only
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Fetch retrieval content and metadata only, skipping generation.
+        - name: include_retrieval_content_text
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include the text of retrieved contents in the response.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Grounded agent response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE token stream emitted when stream=true.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /agents/{agent_id}/feedback:
+    post:
+      operationId: provideFeedback
+      tags:
+        - Agents Query
+      summary: Provide Feedback
+      description: Provide thumbs-up / thumbs-down or score feedback on a message.
+      parameters:
+        - $ref: '#/components/parameters/AgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+      responses:
+        '200':
+          description: Feedback recorded.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /datastores:
+    post:
+      operationId: createDatastore
+      tags:
+        - Datastores
+      summary: Create Datastore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatastoreRequest'
+      responses:
+        '200':
+          description: Datastore created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDatastoreResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    get:
+      operationId: listDatastores
+      tags:
+        - Datastores
+      summary: List Datastores
+      description: Retrieve a list of datastores, with cursor-based pagination.
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+      responses:
+        '200':
+          description: A list of datastores.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDatastoresResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /datastores/{datastore_id}:
+    get:
+      operationId: getDatastoreMetadata
+      tags:
+        - Datastores
+      summary: Get Datastore Metadata
+      parameters:
+        - $ref: '#/components/parameters/DatastoreId'
+      responses:
+        '200':
+          description: Datastore metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datastore'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: deleteDatastore
+      tags:
+        - Datastores
+      summary: Delete Datastore
+      parameters:
+        - $ref: '#/components/parameters/DatastoreId'
+      responses:
+        '200':
+          description: Datastore deleted.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /datastores/{datastore_id}/documents:
+    post:
+      operationId: ingestDocument
+      tags:
+        - Documents
+      summary: Ingest Document
+      description: >-
+        Ingest a document (PDF, HTML, DOC(X), PPT(X), PNG, JPG/JPEG) into a
+        datastore. The document is parsed and chunked for retrieval.
+      parameters:
+        - $ref: '#/components/parameters/DatastoreId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Binary file to ingest.
+                metadata:
+                  type: string
+                  description: >-
+                    Stringified JSON with a custom_metadata object (max 15
+                    fields, <= 2 KB encoded).
+                configuration:
+                  type: string
+                  description: Stringified JSON overriding datastore settings for this document.
+      responses:
+        '200':
+          description: Document accepted for ingestion.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestDocumentResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    get:
+      operationId: listDocuments
+      tags:
+        - Documents
+      summary: List Documents
+      parameters:
+        - $ref: '#/components/parameters/DatastoreId'
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of documents.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /datastores/{datastore_id}/documents/{document_id}:
+    delete:
+      operationId: deleteDocument
+      tags:
+        - Documents
+      summary: Delete Document
+      parameters:
+        - $ref: '#/components/parameters/DatastoreId'
+        - name: document_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Document deleted.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /generate:
+    post:
+      operationId: generate
+      tags:
+        - Generate
+      summary: Generate
+      description: >-
+        Generate a response grounded in supplied knowledge using the Grounded
+        Language Model (GLM). The total request is limited to 32,000 tokens.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateRequest'
+      responses:
+        '200':
+          description: Grounded generation result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /rerank:
+    post:
+      operationId: rerank
+      tags:
+        - Rerank
+      summary: Rerank
+      description: >-
+        Rerank a set of documents against a query using the instruction-following
+        reranker. Optionally steer ranking with a natural-language instruction.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RerankRequest'
+      responses:
+        '200':
+          description: Reranked results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RerankResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /parse:
+    post:
+      operationId: parseFile
+      tags:
+        - Parse
+      summary: Parse File
+      description: >-
+        Submit a document (PDF, DOC(X), PPT(X), PNG, JPG/JPEG; max 300 MB,
+        2000 pages) to be parsed into AI-ready markdown. Returns a job_id;
+        poll the status and results endpoints. Results are retained 30 days.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - raw_file
+              properties:
+                raw_file:
+                  type: string
+                  format: binary
+                  description: File to parse.
+                parse_mode:
+                  type: string
+                  enum:
+                    - basic
+                    - standard
+                  default: standard
+                  description: basic (text-only) or standard (multimodal).
+                enable_document_hierarchy:
+                  type: boolean
+                  description: Add an inferred table of contents (beta).
+                enable_split_tables:
+                  type: boolean
+                  description: Split large tables by row, repeating headers.
+                max_split_table_cells:
+                  type: integer
+                  minimum: 1
+                  description: Cell-count threshold above which tables are split.
+                page_range:
+                  type: string
+                  description: 0-based pages to parse, e.g. "0,1,2" or "0-2,5".
+      responses:
+        '200':
+          description: Parse job accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseJobResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /parse/jobs/{job_id}/status:
+    get:
+      operationId: parseStatus
+      tags:
+        - Parse
+      summary: Parse Status
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+      responses:
+        '200':
+          description: Parse job status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseStatusResponse'
+        '404':
+          description: Job not found or older than 30 days.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /parse/jobs/{job_id}/results:
+    get:
+      operationId: parseResult
+      tags:
+        - Parse
+      summary: Parse Result
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+        - name: output_types
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - markdown-document
+                - markdown-per-page
+                - blocks-per-page
+      responses:
+        '200':
+          description: Parse results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseResultResponse'
+        '404':
+          description: Results not found or older than 30 days.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /parse/jobs:
+    get:
+      operationId: parseListJobs
+      tags:
+        - Parse
+      summary: Parse List Jobs
+      description: List parse jobs in the workspace.
+      responses:
+        '200':
+          description: A list of parse jobs.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /lmunit:
+    post:
+      operationId: lmunit
+      tags:
+        - LMUnit
+      summary: LMUnit
+      description: >-
+        Evaluate a model response against a natural-language unit test. Total
+        input is limited to 7000 tokens. Returns a score from 1 (strongly
+        fails) to 5 (strongly passes).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LMUnitRequest'
+      responses:
+        '200':
+          description: Evaluation score.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LMUnitResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /users:
+    get:
+      operationId: getUsers
+      tags:
+        - Users
+      summary: Get Users
+      responses:
+        '200':
+          description: A list of workspace users.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    patch:
+      operationId: updateUser
+      tags:
+        - Users
+      summary: Update User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: User updated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: removeUser
+      tags:
+        - Users
+      summary: Remove User
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: User removed.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /users/invite:
+    post:
+      operationId: inviteUsers
+      tags:
+        - Users
+      summary: Invite Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+      responses:
+        '200':
+          description: Users invited.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Contextual AI API key supplied as a Bearer token.
+  parameters:
+    AgentId:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the agent.
+    DatastoreId:
+      name: datastore_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the datastore.
+    JobId:
+      name: job_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the parse job.
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
+  schemas:
+    CreateAgentRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 500
+        system_prompt:
+          type: string
+          maxLength: 8000
+        no_retrieval_system_prompt:
+          type: string
+          maxLength: 8000
+        multiturn_system_prompt:
+          type: string
+          maxLength: 8000
+        filter_prompt:
+          type: string
+          maxLength: 8000
+        suggested_queries:
+          type: array
+          items:
+            type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        template_name:
+          type: string
+    CreateAgentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    EditAgentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        system_prompt:
+          type: string
+        suggested_queries:
+          type: array
+          items:
+            type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    Agent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    ListAgentsResponse:
+      type: object
+      properties:
+        agents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agent'
+        next_cursor:
+          type: string
+          nullable: true
+    Message:
+      type: object
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum:
+            - user
+            - assistant
+        content:
+          type: string
+    QueryRequest:
+      type: object
+      required:
+        - messages
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          description: Messages so far, ending in the latest user message.
+        stream:
+          type: boolean
+          default: false
+          description: Stream the response as Server-Sent Events.
+        conversation_id:
+          type: string
+          format: uuid
+          description: Continue an existing conversation.
+        llm_model_id:
+          type: string
+          description: Model ID for a fine-tuned model.
+        documents_filters:
+          type: object
+          description: Metadata filtering criteria for retrieval.
+        override_configuration:
+          type: object
+          description: Temporarily override agent parameters for this query.
+    QueryResponse:
+      type: object
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+        message_id:
+          type: string
+          format: uuid
+        message:
+          $ref: '#/components/schemas/Message'
+        retrieval_contents:
+          type: array
+          items:
+            type: object
+        attributions:
+          type: array
+          items:
+            type: object
+        groundedness_scores:
+          type: array
+          items:
+            type: number
+    FeedbackRequest:
+      type: object
+      required:
+        - message_id
+        - feedback
+      properties:
+        message_id:
+          type: string
+          format: uuid
+        feedback:
+          type: string
+          enum:
+            - thumbs_up
+            - thumbs_down
+            - flagged
+            - removed
+        explanation:
+          type: string
+    CreateDatastoreRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        configuration:
+          type: object
+    CreateDatastoreResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    Datastore:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    ListDatastoresResponse:
+      type: object
+      properties:
+        datastores:
+          type: array
+          items:
+            $ref: '#/components/schemas/Datastore'
+        next_cursor:
+          type: string
+          nullable: true
+    IngestDocumentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the document being ingested.
+    GenerateRequest:
+      type: object
+      required:
+        - model
+        - messages
+        - knowledge
+      properties:
+        model:
+          type: string
+          enum:
+            - v1
+            - v2
+          description: Grounded Language Model (GLM) version.
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          description: Conversation messages; the last must be from the user.
+        knowledge:
+          type: array
+          items:
+            type: string
+          description: Knowledge sources to ground the response in.
+        system_prompt:
+          type: string
+        avoid_commentary:
+          type: boolean
+          default: false
+          description: Suppress non-grounded conversational text.
+        temperature:
+          type: number
+          minimum: 0
+          maximum: 1
+          default: 0
+        top_p:
+          type: number
+          default: 0.9
+        max_new_tokens:
+          type: integer
+          minimum: 1
+          maximum: 2048
+          default: 1024
+    GenerateResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: The model's answer to the user's final message.
+    RerankRequest:
+      type: object
+      required:
+        - query
+        - documents
+        - model
+      properties:
+        query:
+          type: string
+        documents:
+          type: array
+          items:
+            type: string
+        model:
+          type: string
+          enum:
+            - ctxl-rerank-v2-instruct-multilingual
+            - ctxl-rerank-v2-instruct-multilingual-mini
+            - ctxl-rerank-v1-instruct
+        top_n:
+          type: integer
+          minimum: 1
+        instruction:
+          type: string
+          description: Natural-language directive steering the ranking.
+        metadata:
+          type: array
+          items:
+            type: string
+          description: Per-document metadata, matching the documents array length.
+    RerankResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              index:
+                type: integer
+              relevance_score:
+                type: number
+                format: double
+    ParseJobResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+    ParseStatusResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ParseJobStatus'
+        file_name:
+          type: string
+    ParseJobStatus:
+      type: string
+      enum:
+        - pending
+        - processing
+        - retrying
+        - completed
+        - failed
+        - cancelled
+    ParseResultResponse:
+      type: object
+      properties:
+        file_name:
+          type: string
+        status:
+          $ref: '#/components/schemas/ParseJobStatus'
+        markdown_document:
+          type: string
+        pages:
+          type: array
+          items:
+            type: object
+        document_metadata:
+          type: object
+    LMUnitRequest:
+      type: object
+      required:
+        - query
+        - response
+        - unit_test
+      properties:
+        query:
+          type: string
+          description: The prompt to which the model responds.
+        response:
+          type: string
+          description: The model response to evaluate.
+        unit_test:
+          type: string
+          description: Natural-language statement to evaluate the response against.
+    LMUnitResponse:
+      type: object
+      properties:
+        score:
+          type: number
+          minimum: 1
+          maximum: 5
+          description: Continuous score from 1 (strongly fails) to 5 (strongly passes).
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string

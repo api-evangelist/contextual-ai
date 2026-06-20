@@ -1,0 +1,110 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Contextual AI
+providerId: contextual-ai
+created: '2026-06-20'
+modified: '2026-06-20'
+reconciled: false
+tags:
+- AI
+- RAG
+- LLM
+- Grounded Language Model
+- Enterprise
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Contextual AI spend. The standalone Component APIs bill
+  usage-based: Parse per 1,000 pages (basic vs. standard multimodal), Rerank
+  per 1M tokens (v2 / v2-mini), Generate per 1M input and output tokens, and
+  LMUnit per 1M input tokens. The full RAG agent platform (agents, datastores,
+  query) is sales-led / contract-based and not publicly reconciled. New
+  accounts receive $25 in free credits.
+notes: >-
+  Component API rates are public and captured on 2026-06-20; enterprise agent
+  platform pricing is negotiated per contract. Verify rates against the pricing
+  page during reconciliation.
+sources:
+- https://contextual.ai/platform/pricing/
+- https://docs.contextual.ai
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Contextual AI
+serviceCategory: AI and Machine Learning
+billingModel:
+  pricingCategory: Usage-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Usage
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Contextual AI Platform
+  ServiceCategory: AI and Machine Learning
+  ProviderName: Contextual AI
+  PublisherName: Contextual AI
+  InvoiceIssuerName: Contextual AI
+  BillingCurrency: USD
+  ChargeCategory: Usage
+  PricingCategory: Usage-Based
+meters:
+- name: parse_pages
+  description: Pages parsed, billed per 1,000 pages (basic text-only vs. standard multimodal).
+  unit: pages
+  aggregation: sum
+  dimensions:
+  - account
+  - parse_mode
+- name: rerank_tokens
+  description: Tokens reranked, billed per 1M tokens per reranker model (v2 / v2-mini).
+  unit: tokens
+  aggregation: sum
+  dimensions:
+  - account
+  - model
+- name: generate_input_tokens
+  description: Input tokens to the Grounded Language Model, billed per 1M tokens.
+  unit: tokens
+  aggregation: sum
+  dimensions:
+  - account
+  - model
+- name: generate_output_tokens
+  description: Output tokens from the Grounded Language Model, billed per 1M tokens.
+  unit: tokens
+  aggregation: sum
+  dimensions:
+  - account
+  - model
+- name: lmunit_input_tokens
+  description: Input tokens to LMUnit evaluations, billed per 1M tokens.
+  unit: tokens
+  aggregation: sum
+  dimensions:
+  - account
+- name: free_credits
+  description: Promotional $25 free credits applied to new accounts as an adjustment.
+  unit: usd
+  aggregation: sum
+  dimensions:
+  - account
+principles:
+- name: Visibility
+  description: Pull workspace billing exports; inspect parse pages, rerank/generate/lmunit token burn per API key.
+- name: Allocation
+  description: Tag API keys per workload/team; map agent and component usage to internal cost centers.
+- name: Optimization
+  description: Use Parse basic mode where multimodal is unnecessary; prefer rerank-v2-mini for cost-sensitive ranking; cap max_new_tokens; reuse parse results within the 30-day retention window.
+- name: Accountability
+  description: Assign owners per project/key; review token and page spend monthly against budget and free-credit burn-down.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,78 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Contextual AI
+providerId: contextual-ai
+created: '2026-06-20'
+modified: '2026-06-20'
+reconciled: false
+tags:
+- AI
+- RAG
+- LLM
+- Grounded Language Model
+- Enterprise
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  The Contextual AI platform enforces per-workspace rate limits and request
+  constraints across its APIs. Documented hard input constraints include a
+  32,000-token total limit on Generate requests, a 7,000-token total limit on
+  LMUnit requests, and Parse file limits of 300 MB and 2,000 pages per file.
+  Per-endpoint request-per-minute and token-per-minute throttles vary by tier
+  and are not publicly reconciled in this artifact; enterprise agreements raise
+  limits. Throttled requests return HTTP 429.
+notes: >-
+  Capture per-endpoint RPM/TPM and concurrency limits from the Contextual AI
+  console or enterprise agreement during reconciliation. Documented constraints
+  here are the request-size limits stated in the API reference (Generate 32k
+  tokens, LMUnit 7k tokens, Parse 300 MB / 2000 pages, parse results retained
+  30 days).
+sources:
+- https://docs.contextual.ai/api-reference/generate/generate
+- https://docs.contextual.ai/api-reference/lmunit/lmunit
+- https://docs.contextual.ai/api-reference/parse/parse-file
+responseCodes:
+  throttled: 429
+limits:
+- name: Generate Request Tokens
+  scope: request
+  metric: tokens
+  limit: 32000
+  notes: Total tokens (messages + knowledge + output) per Generate request.
+- name: LMUnit Request Tokens
+  scope: request
+  metric: tokens
+  limit: 7000
+  notes: Total input tokens per LMUnit evaluation request.
+- name: Parse File Size
+  scope: request
+  metric: bytes
+  limit: 314572800
+  notes: Maximum 300 MB per file submitted to Parse.
+- name: Parse File Pages
+  scope: request
+  metric: pages
+  limit: 2000
+  notes: Maximum 2,000 pages per file submitted to Parse.
+- name: Requests Per Minute (RPM)
+  scope: workspace
+  metric: requests
+  limit: see provider documentation
+  notes: Per-endpoint RPM varies by tier; not publicly reconciled.
+- name: Tokens Per Minute (TPM)
+  scope: workspace
+  metric: tokens
+  limit: see provider documentation
+  notes: Per-endpoint TPM varies by tier; not publicly reconciled.
+policies:
+- name: Job Result Retention
+  description: Parse job status and results are retained for 30 days; older requests return 404.
+- name: Tiered Limits
+  description: Limits raise with paid usage and via Enterprise agreements.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Retry-After on 429.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
