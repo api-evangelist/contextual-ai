@@ -168,6 +168,14 @@ apis:
     returning a continuous 1-5 score for criteria such as conciseness, technical
     precision, and groundedness.
 common:
+- type: TrustCenter
+  url: security/contextual-ai-trust-center.yml
+- type: VulnerabilityDisclosure
+  url: security/contextual-ai-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/contextual-ai-domain-security.yml
+- type: Authentication
+  url: authentication/contextual-ai-authentication.yml
 - type: GitHubOrganization
   url: https://github.com/ContextualAI
 - type: LinkedIn
@@ -182,6 +190,8 @@ common:
   url: rate-limits/contextual-ai-rate-limits.yml
 - type: FinOps
   url: finops/contextual-ai-finops.yml
+- url: https://contextual.ai/blog
+  type: Blog
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

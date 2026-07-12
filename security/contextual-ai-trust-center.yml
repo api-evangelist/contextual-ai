@@ -1,0 +1,19 @@
+generated: '2026-07-11'
+method: searched
+probe: true
+source: https://contextual.ai/security
+url: https://contextual.ai/security
+certifications:
+- SOC 2
+- ISO 27017
+- PCI DSS
+- CSA STAR
+evidence:
+- source: https://contextual.ai/security
+  keywords:
+  - soc 2
+  - soc2
+  - pci dss
+  - trust center
+  - compliance certification
+  - csa star
