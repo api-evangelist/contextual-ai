@@ -168,6 +168,8 @@ apis:
     returning a continuous 1-5 score for criteria such as conciseness, technical
     precision, and groundedness.
 common:
+- type: AgenticAccess
+  url: agentic-access/contextual-ai-agentic-access.yml
 - type: TrustCenter
   url: security/contextual-ai-trust-center.yml
 - type: VulnerabilityDisclosure
