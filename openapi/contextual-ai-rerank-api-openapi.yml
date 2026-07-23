@@ -1,0 +1,118 @@
+openapi: 3.0.1
+info:
+  title: Contextual AI Platform Agents Rerank API
+  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
+  termsOfService: https://contextual.ai/terms-of-service/
+  contact:
+    name: Contextual AI Support
+    url: https://docs.contextual.ai
+    email: support@contextual.ai
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+  description: Contextual AI production API
+security:
+- bearerAuth: []
+tags:
+- name: Rerank
+  description: Instruction-following reranking of retrieved passages.
+paths:
+  /rerank:
+    post:
+      operationId: rerank
+      tags:
+      - Rerank
+      summary: Rerank
+      description: Rerank a set of documents against a query using the instruction-following reranker. Optionally steer ranking with a natural-language instruction.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RerankRequest'
+      responses:
+        '200':
+          description: Reranked results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RerankResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    RerankRequest:
+      type: object
+      required:
+      - query
+      - documents
+      - model
+      properties:
+        query:
+          type: string
+        documents:
+          type: array
+          items:
+            type: string
+        model:
+          type: string
+          enum:
+          - ctxl-rerank-v2-instruct-multilingual
+          - ctxl-rerank-v2-instruct-multilingual-mini
+          - ctxl-rerank-v1-instruct
+        top_n:
+          type: integer
+          minimum: 1
+        instruction:
+          type: string
+          description: Natural-language directive steering the ranking.
+        metadata:
+          type: array
+          items:
+            type: string
+          description: Per-document metadata, matching the documents array length.
+    RerankResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              index:
+                type: integer
+              relevance_score:
+                type: number
+                format: double
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Contextual AI API key supplied as a Bearer token.

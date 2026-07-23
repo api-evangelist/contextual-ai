@@ -1,0 +1,250 @@
+openapi: 3.0.1
+info:
+  title: Contextual AI Platform Agents API
+  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
+  termsOfService: https://contextual.ai/terms-of-service/
+  contact:
+    name: Contextual AI Support
+    url: https://docs.contextual.ai
+    email: support@contextual.ai
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+  description: Contextual AI production API
+security:
+- bearerAuth: []
+tags:
+- name: Agents
+  description: Create, configure, and manage RAG agents.
+paths:
+  /agents:
+    post:
+      operationId: createAgent
+      tags:
+      - Agents
+      summary: Create Agent
+      description: Create a new RAG agent. If no datastore_ids are supplied, a new datastore is created automatically and associated with the agent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgentRequest'
+      responses:
+        '200':
+          description: Agent created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAgentResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    get:
+      operationId: listAgents
+      tags:
+      - Agents
+      summary: List Agents
+      description: Retrieve a list of agents in the workspace, with cursor-based pagination.
+      parameters:
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Cursor from a previous list response for pagination.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+        description: Maximum number of agents to return.
+      responses:
+        '200':
+          description: A list of agents.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAgentsResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /agents/{agent_id}:
+    get:
+      operationId: getAgentMetadata
+      tags:
+      - Agents
+      summary: Get Agent Metadata
+      parameters:
+      - $ref: '#/components/parameters/AgentId'
+      responses:
+        '200':
+          description: Agent metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    patch:
+      operationId: editAgent
+      tags:
+      - Agents
+      summary: Edit Agent
+      parameters:
+      - $ref: '#/components/parameters/AgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditAgentRequest'
+      responses:
+        '200':
+          description: Agent updated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: deleteAgent
+      tags:
+      - Agents
+      summary: Delete Agent
+      parameters:
+      - $ref: '#/components/parameters/AgentId'
+      responses:
+        '200':
+          description: Agent deleted.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  schemas:
+    EditAgentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        system_prompt:
+          type: string
+        suggested_queries:
+          type: array
+          items:
+            type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    CreateAgentRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 500
+        system_prompt:
+          type: string
+          maxLength: 8000
+        no_retrieval_system_prompt:
+          type: string
+          maxLength: 8000
+        multiturn_system_prompt:
+          type: string
+          maxLength: 8000
+        filter_prompt:
+          type: string
+          maxLength: 8000
+        suggested_queries:
+          type: array
+          items:
+            type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        template_name:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    CreateAgentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    ListAgentsResponse:
+      type: object
+      properties:
+        agents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agent'
+        next_cursor:
+          type: string
+          nullable: true
+    Agent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+  parameters:
+    AgentId:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the agent.
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Contextual AI API key supplied as a Bearer token.

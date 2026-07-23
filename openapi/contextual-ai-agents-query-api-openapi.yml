@@ -1,0 +1,205 @@
+openapi: 3.0.1
+info:
+  title: Contextual AI Platform Agents Agents Query API
+  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
+  termsOfService: https://contextual.ai/terms-of-service/
+  contact:
+    name: Contextual AI Support
+    url: https://docs.contextual.ai
+    email: support@contextual.ai
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+  description: Contextual AI production API
+security:
+- bearerAuth: []
+tags:
+- name: Agents Query
+  description: Query agents for grounded responses, retrievals, metrics, and feedback.
+paths:
+  /agents/{agent_id}/query:
+    post:
+      operationId: queryAgent
+      tags:
+      - Agents Query
+      summary: Query Agent
+      description: Send a conversation to an agent and receive a grounded response with attributions, retrieval contents, and groundedness scores. Set stream=true to receive a Server-Sent Events token stream.
+      parameters:
+      - $ref: '#/components/parameters/AgentId'
+      - name: retrievals_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+        description: Fetch retrieval content and metadata only, skipping generation.
+      - name: include_retrieval_content_text
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+        description: Include the text of retrieved contents in the response.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Grounded agent response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE token stream emitted when stream=true.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /agents/{agent_id}/feedback:
+    post:
+      operationId: provideFeedback
+      tags:
+      - Agents Query
+      summary: Provide Feedback
+      description: Provide thumbs-up / thumbs-down or score feedback on a message.
+      parameters:
+      - $ref: '#/components/parameters/AgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+      responses:
+        '200':
+          description: Feedback recorded.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  schemas:
+    Message:
+      type: object
+      required:
+      - role
+      - content
+      properties:
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+        content:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    QueryRequest:
+      type: object
+      required:
+      - messages
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          description: Messages so far, ending in the latest user message.
+        stream:
+          type: boolean
+          default: false
+          description: Stream the response as Server-Sent Events.
+        conversation_id:
+          type: string
+          format: uuid
+          description: Continue an existing conversation.
+        llm_model_id:
+          type: string
+          description: Model ID for a fine-tuned model.
+        documents_filters:
+          type: object
+          description: Metadata filtering criteria for retrieval.
+        override_configuration:
+          type: object
+          description: Temporarily override agent parameters for this query.
+    FeedbackRequest:
+      type: object
+      required:
+      - message_id
+      - feedback
+      properties:
+        message_id:
+          type: string
+          format: uuid
+        feedback:
+          type: string
+          enum:
+          - thumbs_up
+          - thumbs_down
+          - flagged
+          - removed
+        explanation:
+          type: string
+    QueryResponse:
+      type: object
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+        message_id:
+          type: string
+          format: uuid
+        message:
+          $ref: '#/components/schemas/Message'
+        retrieval_contents:
+          type: array
+          items:
+            type: object
+        attributions:
+          type: array
+          items:
+            type: object
+        groundedness_scores:
+          type: array
+          items:
+            type: number
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
+  parameters:
+    AgentId:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the agent.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Contextual AI API key supplied as a Bearer token.

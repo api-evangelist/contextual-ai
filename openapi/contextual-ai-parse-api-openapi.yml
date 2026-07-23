@@ -1,0 +1,211 @@
+openapi: 3.0.1
+info:
+  title: Contextual AI Platform Agents Parse API
+  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
+  termsOfService: https://contextual.ai/terms-of-service/
+  contact:
+    name: Contextual AI Support
+    url: https://docs.contextual.ai
+    email: support@contextual.ai
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+  description: Contextual AI production API
+security:
+- bearerAuth: []
+tags:
+- name: Parse
+  description: Parse documents into structured, AI-ready markdown.
+paths:
+  /parse:
+    post:
+      operationId: parseFile
+      tags:
+      - Parse
+      summary: Parse File
+      description: Submit a document (PDF, DOC(X), PPT(X), PNG, JPG/JPEG; max 300 MB, 2000 pages) to be parsed into AI-ready markdown. Returns a job_id; poll the status and results endpoints. Results are retained 30 days.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - raw_file
+              properties:
+                raw_file:
+                  type: string
+                  format: binary
+                  description: File to parse.
+                parse_mode:
+                  type: string
+                  enum:
+                  - basic
+                  - standard
+                  default: standard
+                  description: basic (text-only) or standard (multimodal).
+                enable_document_hierarchy:
+                  type: boolean
+                  description: Add an inferred table of contents (beta).
+                enable_split_tables:
+                  type: boolean
+                  description: Split large tables by row, repeating headers.
+                max_split_table_cells:
+                  type: integer
+                  minimum: 1
+                  description: Cell-count threshold above which tables are split.
+                page_range:
+                  type: string
+                  description: 0-based pages to parse, e.g. "0,1,2" or "0-2,5".
+      responses:
+        '200':
+          description: Parse job accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseJobResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /parse/jobs/{job_id}/status:
+    get:
+      operationId: parseStatus
+      tags:
+      - Parse
+      summary: Parse Status
+      parameters:
+      - $ref: '#/components/parameters/JobId'
+      responses:
+        '200':
+          description: Parse job status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseStatusResponse'
+        '404':
+          description: Job not found or older than 30 days.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /parse/jobs/{job_id}/results:
+    get:
+      operationId: parseResult
+      tags:
+      - Parse
+      summary: Parse Result
+      parameters:
+      - $ref: '#/components/parameters/JobId'
+      - name: output_types
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - markdown-document
+            - markdown-per-page
+            - blocks-per-page
+      responses:
+        '200':
+          description: Parse results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseResultResponse'
+        '404':
+          description: Results not found or older than 30 days.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /parse/jobs:
+    get:
+      operationId: parseListJobs
+      tags:
+      - Parse
+      summary: Parse List Jobs
+      description: List parse jobs in the workspace.
+      responses:
+        '200':
+          description: A list of parse jobs.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    ParseJobResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+    ParseStatusResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ParseJobStatus'
+        file_name:
+          type: string
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    ParseResultResponse:
+      type: object
+      properties:
+        file_name:
+          type: string
+        status:
+          $ref: '#/components/schemas/ParseJobStatus'
+        markdown_document:
+          type: string
+        pages:
+          type: array
+          items:
+            type: object
+        document_metadata:
+          type: object
+    ParseJobStatus:
+      type: string
+      enum:
+      - pending
+      - processing
+      - retrying
+      - completed
+      - failed
+      - cancelled
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
+  parameters:
+    JobId:
+      name: job_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the parse job.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Contextual AI API key supplied as a Bearer token.

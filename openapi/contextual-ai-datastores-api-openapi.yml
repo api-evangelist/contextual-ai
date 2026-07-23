@@ -1,0 +1,176 @@
+openapi: 3.0.1
+info:
+  title: Contextual AI Platform Agents Datastores API
+  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
+  termsOfService: https://contextual.ai/terms-of-service/
+  contact:
+    name: Contextual AI Support
+    url: https://docs.contextual.ai
+    email: support@contextual.ai
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+  description: Contextual AI production API
+security:
+- bearerAuth: []
+tags:
+- name: Datastores
+  description: Create and manage datastores that hold ingested knowledge.
+paths:
+  /datastores:
+    post:
+      operationId: createDatastore
+      tags:
+      - Datastores
+      summary: Create Datastore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatastoreRequest'
+      responses:
+        '200':
+          description: Datastore created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDatastoreResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    get:
+      operationId: listDatastores
+      tags:
+      - Datastores
+      summary: List Datastores
+      description: Retrieve a list of datastores, with cursor-based pagination.
+      parameters:
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+      responses:
+        '200':
+          description: A list of datastores.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDatastoresResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /datastores/{datastore_id}:
+    get:
+      operationId: getDatastoreMetadata
+      tags:
+      - Datastores
+      summary: Get Datastore Metadata
+      parameters:
+      - $ref: '#/components/parameters/DatastoreId'
+      responses:
+        '200':
+          description: Datastore metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datastore'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: deleteDatastore
+      tags:
+      - Datastores
+      summary: Delete Datastore
+      parameters:
+      - $ref: '#/components/parameters/DatastoreId'
+      responses:
+        '200':
+          description: Datastore deleted.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  schemas:
+    ListDatastoresResponse:
+      type: object
+      properties:
+        datastores:
+          type: array
+          items:
+            $ref: '#/components/schemas/Datastore'
+        next_cursor:
+          type: string
+          nullable: true
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    CreateDatastoreResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    CreateDatastoreRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        configuration:
+          type: object
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    Datastore:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
+  parameters:
+    DatastoreId:
+      name: datastore_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the datastore.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Contextual AI API key supplied as a Bearer token.
