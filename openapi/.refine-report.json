@@ -1,0 +1,30 @@
+{
+  "provider": "contextual-ai",
+  "sources": [
+    "contextual-ai-agents-api-openapi.yml",
+    "contextual-ai-agents-query-api-openapi.yml",
+    "contextual-ai-datastores-api-openapi.yml",
+    "contextual-ai-documents-api-openapi.yml",
+    "contextual-ai-generate-api-openapi.yml",
+    "contextual-ai-lmunit-api-openapi.yml",
+    "contextual-ai-parse-api-openapi.yml",
+    "contextual-ai-rerank-api-openapi.yml",
+    "contextual-ai-users-api-openapi.yml"
+  ],
+  "outputs": [
+    "contextual-ai-agents-api-openapi.yml",
+    "contextual-ai-agents-query-api-openapi.yml",
+    "contextual-ai-datastores-api-openapi.yml",
+    "contextual-ai-documents-api-openapi.yml",
+    "contextual-ai-generate-api-openapi.yml",
+    "contextual-ai-lmunit-api-openapi.yml",
+    "contextual-ai-parse-api-openapi.yml",
+    "contextual-ai-rerank-api-openapi.yml",
+    "contextual-ai-users-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
