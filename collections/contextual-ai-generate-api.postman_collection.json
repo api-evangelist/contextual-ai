@@ -1,0 +1,191 @@
+{
+  "item": [
+    {
+      "id": "f5e7a583-0b39-4cf0-b9b1-0598130c5fc5",
+      "name": "Generate",
+      "description": {
+        "content": "Grounded generation with the Grounded Language Model (GLM).",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "022d7d8e-8b8a-43e1-9d3a-39d84c817629",
+          "name": "Generate",
+          "request": {
+            "name": "Generate",
+            "description": {
+              "content": "Generate a response grounded in supplied knowledge using the Grounded Language Model (GLM). The total request is limited to 32,000 tokens.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "generate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"<string>\",\n  \"messages\": [\n    {\n      \"role\": \"<string>\",\n      \"content\": \"<string>\"\n    },\n    {\n      \"role\": \"<string>\",\n      \"content\": \"<string>\"\n    }\n  ],\n  \"knowledge\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"system_prompt\": \"<string>\",\n  \"avoid_commentary\": false,\n  \"temperature\": 0,\n  \"top_p\": 0.9,\n  \"max_new_tokens\": 1024\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "38bf0f6f-4e1d-4cc8-a257-157cc0f3799a",
+              "name": "Grounded generation result.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"model\": \"<string>\",\n  \"messages\": [\n    {\n      \"role\": \"<string>\",\n      \"content\": \"<string>\"\n    },\n    {\n      \"role\": \"<string>\",\n      \"content\": \"<string>\"\n    }\n  ],\n  \"knowledge\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"system_prompt\": \"<string>\",\n  \"avoid_commentary\": false,\n  \"temperature\": 0,\n  \"top_p\": 0.9,\n  \"max_new_tokens\": 1024\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"response\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "93ae524f-4f90-4a34-b332-e7978986f2a5",
+              "name": "Validation error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"model\": \"<string>\",\n  \"messages\": [\n    {\n      \"role\": \"<string>\",\n      \"content\": \"<string>\"\n    },\n    {\n      \"role\": \"<string>\",\n      \"content\": \"<string>\"\n    }\n  ],\n  \"knowledge\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"system_prompt\": \"<string>\",\n  \"avoid_commentary\": false,\n  \"temperature\": 0,\n  \"top_p\": 0.9,\n  \"max_new_tokens\": 1024\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.contextual.ai/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "8eb623ba-5d14-4a9e-9f89-240dd85b0597",
+    "name": "Contextual AI Platform Agents Generate API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.\n\nContact Support:\n Name: Contextual AI Support\n Email: support@contextual.ai",
+      "type": "text/plain"
+    }
+  }
+}

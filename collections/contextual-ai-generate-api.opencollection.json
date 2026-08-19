@@ -1,0 +1,39 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform Agents Generate API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Generate",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Generate",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/generate",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Generate a response grounded in supplied knowledge using the Grounded Language Model (GLM). The total request is limited to 32,000 tokens."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

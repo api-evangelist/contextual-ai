@@ -1,0 +1,82 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform Agents Agents Query API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Agents Query",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Query Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/agents/:agent_id/query",
+            "params": [
+              {
+                "name": "agent_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the agent."
+              },
+              {
+                "name": "retrievals_only",
+                "value": "",
+                "type": "query",
+                "description": "Fetch retrieval content and metadata only, skipping generation."
+              },
+              {
+                "name": "include_retrieval_content_text",
+                "value": "",
+                "type": "query",
+                "description": "Include the text of retrieved contents in the response."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Send a conversation to an agent and receive a grounded response with attributions, retrieval contents, and groundedness scores. Set stream=true to receive a Server-Sent Events token stream."
+        },
+        {
+          "info": {
+            "name": "Provide Feedback",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/agents/:agent_id/feedback",
+            "params": [
+              {
+                "name": "agent_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the agent."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Provide thumbs-up / thumbs-down or score feedback on a message."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

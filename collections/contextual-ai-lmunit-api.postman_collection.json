@@ -1,0 +1,191 @@
+{
+  "item": [
+    {
+      "id": "ea0809f8-8070-4655-bc34-f0c1b7cf9412",
+      "name": "LMUnit",
+      "description": {
+        "content": "Evaluate model responses with natural-language unit tests.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "aa612486-a5d0-431c-a433-d90b5dc6300c",
+          "name": "LMUnit",
+          "request": {
+            "name": "LMUnit",
+            "description": {
+              "content": "Evaluate a model response against a natural-language unit test. Total input is limited to 7000 tokens. Returns a score from 1 (strongly fails) to 5 (strongly passes).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "lmunit"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"<string>\",\n  \"response\": \"<string>\",\n  \"unit_test\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "dbeaa1bd-3522-4643-b8d2-a35ecb7d0eca",
+              "name": "Evaluation score.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "lmunit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"<string>\",\n  \"response\": \"<string>\",\n  \"unit_test\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"score\": 2.577674416748\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9b2ea81a-96c3-49f2-9581-dd37cdfeba21",
+              "name": "Validation error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "lmunit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"<string>\",\n  \"response\": \"<string>\",\n  \"unit_test\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.contextual.ai/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "e3dd3627-16c5-4795-acfb-14512c854507",
+    "name": "Contextual AI Platform Agents LMUnit API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.\n\nContact Support:\n Name: Contextual AI Support\n Email: support@contextual.ai",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform Agents API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Agents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Agents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/agents",
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor from a previous list response for pagination."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of agents to return."
+              }
+            ]
+          },
+          "docs": "Retrieve a list of agents in the workspace, with cursor-based pagination."
+        },
+        {
+          "info": {
+            "name": "Create Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/agents",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new RAG agent. If no datastore_ids are supplied, a new datastore is created automatically and associated with the agent."
+        },
+        {
+          "info": {
+            "name": "Get Agent Metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/agents/:agent_id",
+            "params": [
+              {
+                "name": "agent_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the agent."
+              }
+            ]
+          },
+          "docs": "Get Agent Metadata"
+        },
+        {
+          "info": {
+            "name": "Edit Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.contextual.ai/v1/agents/:agent_id",
+            "params": [
+              {
+                "name": "agent_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the agent."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit Agent"
+        },
+        {
+          "info": {
+            "name": "Delete Agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.contextual.ai/v1/agents/:agent_id",
+            "params": [
+              {
+                "name": "agent_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the agent."
+              }
+            ]
+          },
+          "docs": "Delete Agent"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

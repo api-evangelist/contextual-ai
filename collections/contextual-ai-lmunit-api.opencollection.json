@@ -1,0 +1,39 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform Agents LMUnit API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "LMUnit",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "LMUnit",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/lmunit",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Evaluate a model response against a natural-language unit test. Total input is limited to 7000 tokens. Returns a score from 1 (strongly fails) to 5 (strongly passes)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

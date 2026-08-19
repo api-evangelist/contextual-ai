@@ -1,0 +1,882 @@
+{
+  "item": [
+    {
+      "id": "c496befb-0220-4dfc-a9f1-567bd869c46a",
+      "name": "Parse",
+      "description": {
+        "content": "Parse documents into structured, AI-ready markdown.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "86b34a2a-cc56-4d65-8d93-af4b55dc058a",
+          "name": "Parse File",
+          "request": {
+            "name": "Parse File",
+            "description": {
+              "content": "Submit a document (PDF, DOC(X), PPT(X), PNG, JPG/JPEG; max 300 MB, 2000 pages) to be parsed into AI-ready markdown. Returns a job_id; poll the status and results endpoints. Results are retained 30 days.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "parse"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "raw_file",
+                  "type": "file",
+                  "description": "(Required) File to parse."
+                },
+                {
+                  "key": "parse_mode",
+                  "value": "standard",
+                  "type": "text",
+                  "description": "basic (text-only) or standard (multimodal). (This can only be one of basic,standard)"
+                },
+                {
+                  "key": "enable_document_hierarchy",
+                  "value": "<boolean>",
+                  "type": "text",
+                  "description": "Add an inferred table of contents (beta)."
+                },
+                {
+                  "key": "enable_split_tables",
+                  "value": "<boolean>",
+                  "type": "text",
+                  "description": "Split large tables by row, repeating headers."
+                },
+                {
+                  "key": "max_split_table_cells",
+                  "value": "<integer>",
+                  "type": "text",
+                  "description": "Cell-count threshold above which tables are split."
+                },
+                {
+                  "key": "page_range",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "0-based pages to parse, e.g. \"0,1,2\" or \"0-2,5\"."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "5de6a06f-0e87-44c1-a431-2a3f3037bff6",
+              "name": "Parse job accepted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) File to parse.",
+                        "type": "text/plain"
+                      },
+                      "key": "raw_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "basic (text-only) or standard (multimodal). (This can only be one of basic,standard)",
+                        "type": "text/plain"
+                      },
+                      "key": "parse_mode",
+                      "value": "standard",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Add an inferred table of contents (beta).",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_document_hierarchy",
+                      "value": "<boolean>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Split large tables by row, repeating headers.",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_split_tables",
+                      "value": "<boolean>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Cell-count threshold above which tables are split.",
+                        "type": "text/plain"
+                      },
+                      "key": "max_split_table_cells",
+                      "value": "<integer>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "0-based pages to parse, e.g. \"0,1,2\" or \"0-2,5\".",
+                        "type": "text/plain"
+                      },
+                      "key": "page_range",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"job_id\": \"5e5e1c5d-d35c-de6b-7110-f9d015ddcaae\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6cd121ed-64cf-4d39-a407-7ebec2f7410e",
+              "name": "Validation error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) File to parse.",
+                        "type": "text/plain"
+                      },
+                      "key": "raw_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "basic (text-only) or standard (multimodal). (This can only be one of basic,standard)",
+                        "type": "text/plain"
+                      },
+                      "key": "parse_mode",
+                      "value": "standard",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Add an inferred table of contents (beta).",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_document_hierarchy",
+                      "value": "<boolean>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Split large tables by row, repeating headers.",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_split_tables",
+                      "value": "<boolean>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Cell-count threshold above which tables are split.",
+                        "type": "text/plain"
+                      },
+                      "key": "max_split_table_cells",
+                      "value": "<integer>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "0-based pages to parse, e.g. \"0,1,2\" or \"0-2,5\".",
+                        "type": "text/plain"
+                      },
+                      "key": "page_range",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c0c1a59e-9694-49f1-a73a-e6667368202d",
+          "name": "Parse Status",
+          "request": {
+            "name": "Parse Status",
+            "description": {},
+            "url": {
+              "path": [
+                "parse",
+                "jobs",
+                ":job_id",
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "job_id",
+                  "description": "(Required) ID of the parse job."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "86095379-6980-4a04-9a7b-1968e9ef2972",
+              "name": "Parse job status.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse",
+                    "jobs",
+                    ":job_id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job_id",
+                      "description": "(Required) ID of the parse job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"failed\",\n  \"file_name\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f5f8fe77-52f8-4904-9293-175e430ba1ce",
+              "name": "Job not found or older than 30 days.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse",
+                    "jobs",
+                    ":job_id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job_id",
+                      "description": "(Required) ID of the parse job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "7253a7f3-5bb6-46b9-b0a3-7f32919ceb3b",
+              "name": "Validation error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse",
+                    "jobs",
+                    ":job_id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job_id",
+                      "description": "(Required) ID of the parse job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2b01dddf-d929-470e-9d11-d477faba72bb",
+          "name": "Parse Result",
+          "request": {
+            "name": "Parse Result",
+            "description": {},
+            "url": {
+              "path": [
+                "parse",
+                "jobs",
+                ":job_id",
+                "results"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "output_types",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "output_types",
+                  "value": "<string>"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "job_id",
+                  "description": "(Required) ID of the parse job."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "830ae069-fc6f-4437-95c9-7676d933e84f",
+              "name": "Parse results.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse",
+                    "jobs",
+                    ":job_id",
+                    "results"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "output_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "output_types",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job_id",
+                      "description": "(Required) ID of the parse job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"file_name\": \"string\",\n  \"status\": \"retrying\",\n  \"markdown_document\": \"string\",\n  \"document_metadata\": {}\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "873af946-6a67-4a87-96cc-4c85c1e23929",
+              "name": "Results not found or older than 30 days.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse",
+                    "jobs",
+                    ":job_id",
+                    "results"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "output_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "output_types",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job_id",
+                      "description": "(Required) ID of the parse job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "b9c86b1e-bc64-4832-84a4-84ec9f49003a",
+              "name": "Validation error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse",
+                    "jobs",
+                    ":job_id",
+                    "results"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "output_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "output_types",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job_id",
+                      "description": "(Required) ID of the parse job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b97329b4-0c64-42fa-a59e-0a91daf35a07",
+          "name": "Parse List Jobs",
+          "request": {
+            "name": "Parse List Jobs",
+            "description": {
+              "content": "List parse jobs in the workspace.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "parse",
+                "jobs"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d75f48bf-5b9a-4469-82a7-67072f6376df",
+              "name": "A list of parse jobs.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "19e99e72-f508-45f8-af1f-17a07c7ef9a8",
+              "name": "Validation error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "parse",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.contextual.ai/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "0cf406d4-30a2-4fe6-b76a-968e267e0382",
+    "name": "Contextual AI Platform Agents Parse API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.\n\nContact Support:\n Name: Contextual AI Support\n Email: support@contextual.ai",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform Agents Datastores API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Datastores",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Datastores",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/datastores",
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Retrieve a list of datastores, with cursor-based pagination."
+        },
+        {
+          "info": {
+            "name": "Create Datastore",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/datastores",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create Datastore"
+        },
+        {
+          "info": {
+            "name": "Get Datastore Metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/datastores/:datastore_id",
+            "params": [
+              {
+                "name": "datastore_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the datastore."
+              }
+            ]
+          },
+          "docs": "Get Datastore Metadata"
+        },
+        {
+          "info": {
+            "name": "Delete Datastore",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.contextual.ai/v1/datastores/:datastore_id",
+            "params": [
+              {
+                "name": "datastore_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the datastore."
+              }
+            ]
+          },
+          "docs": "Delete Datastore"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

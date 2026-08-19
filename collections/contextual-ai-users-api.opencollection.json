@@ -1,0 +1,83 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform Agents Users API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Users",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Users",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/users"
+          },
+          "docs": "Get Users"
+        },
+        {
+          "info": {
+            "name": "Update User",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.contextual.ai/v1/users",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update User"
+        },
+        {
+          "info": {
+            "name": "Remove User",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.contextual.ai/v1/users",
+            "params": [
+              {
+                "name": "email",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Remove User"
+        },
+        {
+          "info": {
+            "name": "Invite Users",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/users/invite",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Invite Users"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,124 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform Agents Parse API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Parse",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Parse File",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/parse",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "raw_file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "parse_mode",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "enable_document_hierarchy",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "enable_split_tables",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "max_split_table_cells",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "page_range",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Submit a document (PDF, DOC(X), PPT(X), PNG, JPG/JPEG; max 300 MB, 2000 pages) to be parsed into AI-ready markdown. Returns a job_id; poll the status and results endpoints. Results are retained 30 days."
+        },
+        {
+          "info": {
+            "name": "Parse Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/parse/jobs/:job_id/status",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the parse job."
+              }
+            ]
+          },
+          "docs": "Parse Status"
+        },
+        {
+          "info": {
+            "name": "Parse Result",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/parse/jobs/:job_id/results",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the parse job."
+              },
+              {
+                "name": "output_types",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Parse Result"
+        },
+        {
+          "info": {
+            "name": "Parse List Jobs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/parse/jobs"
+          },
+          "docs": "List parse jobs in the workspace."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

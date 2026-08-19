@@ -1,0 +1,116 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Contextual AI Platform Agents Documents API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Documents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Documents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.contextual.ai/v1/datastores/:datastore_id/documents",
+            "params": [
+              {
+                "name": "datastore_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the datastore."
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List Documents"
+        },
+        {
+          "info": {
+            "name": "Ingest Document",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.contextual.ai/v1/datastores/:datastore_id/documents",
+            "params": [
+              {
+                "name": "datastore_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the datastore."
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "metadata",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "configuration",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Ingest a document (PDF, HTML, DOC(X), PPT(X), PNG, JPG/JPEG) into a datastore. The document is parsed and chunked for retrieval."
+        },
+        {
+          "info": {
+            "name": "Delete Document",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.contextual.ai/v1/datastores/:datastore_id/documents/:document_id",
+            "params": [
+              {
+                "name": "datastore_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the datastore."
+              },
+              {
+                "name": "document_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete Document"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
