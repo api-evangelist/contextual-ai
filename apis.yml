@@ -22,6 +22,12 @@ accessModel:
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/contextual-ai.png
 tags:
+- Artificial Intelligence
+- RAG
+- LLM
+- Grounded Language Model
+- Enterprise
+tags_raw:
 - AI
 - RAG
 - LLM
@@ -373,6 +379,8 @@ apis:
   humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
   baseURL: https://api.contextual.ai/v1
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
