@@ -7,6 +7,18 @@ description: Contextual AI is an enterprise RAG platform built around a Grounded
   end-to-end RAG agents (create, configure, query) plus standalone component APIs -
   Generate, Rerank, Parse, and LMUnit - over datastores of ingested documents, all
   authenticated with a Bearer API key.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: paid
   onboarding: self-serve
