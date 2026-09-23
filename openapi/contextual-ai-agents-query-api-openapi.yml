@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Contextual AI Platform Agents Agents Query API
+  title: Contextual AI Platform Agents Query API
   description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
   termsOfService: https://contextual.ai/terms-of-service/
   contact:
@@ -80,19 +80,33 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
+  parameters:
+    AgentId:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the agent.
   schemas:
-    Message:
+    FeedbackRequest:
       type: object
       required:
-      - role
-      - content
+      - message_id
+      - feedback
       properties:
-        role:
+        message_id:
+          type: string
+          format: uuid
+        feedback:
           type: string
           enum:
-          - user
-          - assistant
-        content:
+          - thumbs_up
+          - thumbs_down
+          - flagged
+          - removed
+        explanation:
           type: string
     HTTPValidationError:
       type: object
@@ -128,24 +142,6 @@ components:
         override_configuration:
           type: object
           description: Temporarily override agent parameters for this query.
-    FeedbackRequest:
-      type: object
-      required:
-      - message_id
-      - feedback
-      properties:
-        message_id:
-          type: string
-          format: uuid
-        feedback:
-          type: string
-          enum:
-          - thumbs_up
-          - thumbs_down
-          - flagged
-          - removed
-        explanation:
-          type: string
     QueryResponse:
       type: object
       properties:
@@ -169,6 +165,19 @@ components:
           type: array
           items:
             type: number
+    Message:
+      type: object
+      required:
+      - role
+      - content
+      properties:
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+        content:
+          type: string
     ValidationErrorDetail:
       type: object
       properties:
@@ -189,15 +198,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/HTTPValidationError'
-  parameters:
-    AgentId:
-      name: agent_id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: ID of the agent.
   securitySchemes:
     bearerAuth:
       type: http

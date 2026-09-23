@@ -1,15 +1,7 @@
 {
   "provider": "contextual-ai",
   "sources": [
-    "contextual-ai-agents-api-openapi.yml",
-    "contextual-ai-agents-query-api-openapi.yml",
-    "contextual-ai-datastores-api-openapi.yml",
-    "contextual-ai-documents-api-openapi.yml",
-    "contextual-ai-generate-api-openapi.yml",
-    "contextual-ai-lmunit-api-openapi.yml",
-    "contextual-ai-parse-api-openapi.yml",
-    "contextual-ai-rerank-api-openapi.yml",
-    "contextual-ai-users-api-openapi.yml"
+    "_original/contextual-ai-openapi.yml"
   ],
   "outputs": [
     "contextual-ai-agents-api-openapi.yml",
@@ -25,6 +17,20 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "contextual-ai-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "contextual-ai-agents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "contextual-ai-agents-query-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "contextual-ai-datastores-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "contextual-ai-documents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "contextual-ai-generate-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "contextual-ai-lmunit-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "contextual-ai-parse-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "contextual-ai-rerank-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "contextual-ai-users-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

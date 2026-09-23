@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Contextual AI Platform Agents Datastores API
+  title: Contextual AI Platform Datastores API
   description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
   termsOfService: https://contextual.ai/terms-of-service/
   contact:
@@ -97,16 +97,15 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
-    ListDatastoresResponse:
+    CreateDatastoreRequest:
       type: object
+      required:
+      - name
       properties:
-        datastores:
-          type: array
-          items:
-            $ref: '#/components/schemas/Datastore'
-        next_cursor:
+        name:
           type: string
-          nullable: true
+        configuration:
+          type: object
     HTTPValidationError:
       type: object
       properties:
@@ -120,15 +119,28 @@ components:
         id:
           type: string
           format: uuid
-    CreateDatastoreRequest:
+    ListDatastoresResponse:
       type: object
-      required:
-      - name
       properties:
+        datastores:
+          type: array
+          items:
+            $ref: '#/components/schemas/Datastore'
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    Datastore:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
         name:
           type: string
-        configuration:
-          type: object
+        created_at:
+          type: string
+          format: date-time
     ValidationErrorDetail:
       type: object
       properties:
@@ -142,17 +154,6 @@ components:
           type: string
         type:
           type: string
-    Datastore:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        created_at:
-          type: string
-          format: date-time
   responses:
     ValidationError:
       description: Validation error.

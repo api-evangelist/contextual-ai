@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   title: Contextual AI Platform Agents API
   description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
@@ -118,24 +118,6 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
-    EditAgentRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        system_prompt:
-          type: string
-        suggested_queries:
-          type: array
-          items:
-            type: string
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
     CreateAgentRequest:
       type: object
       required:
@@ -171,13 +153,6 @@ components:
             format: uuid
         template_name:
           type: string
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
     CreateAgentResponse:
       type: object
       properties:
@@ -189,19 +164,6 @@ components:
           items:
             type: string
             format: uuid
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
     ListAgentsResponse:
       type: object
       properties:
@@ -210,8 +172,27 @@ components:
           items:
             $ref: '#/components/schemas/Agent'
         next_cursor:
+          type:
+          - string
+          - 'null'
+    EditAgentRequest:
+      type: object
+      properties:
+        name:
           type: string
-          nullable: true
+        description:
+          type: string
+        system_prompt:
+          type: string
+        suggested_queries:
+          type: array
+          items:
+            type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
     Agent:
       type: object
       properties:
@@ -227,6 +208,26 @@ components:
           items:
             type: string
             format: uuid
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
   parameters:
     AgentId:
       name: agent_id

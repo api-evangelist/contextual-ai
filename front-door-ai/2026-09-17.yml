@@ -1,0 +1,32 @@
+# Front Door AI Index — contextual-ai — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: contextual-ai
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: contextual.ai
+  final_host: contextual.ai
+  ownership: own
+  owner: contextual-ai
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 22
+  host_score: 22
+  density: 30.18
+  words: 729
+  tiers:
+    agentic: 4
+    core: 18
+    model: 0
+  ambiguous: 21
+  top_terms:
+    agent: 19
+    AI: 18
+    AI agent: 1
+    agentic: 1
+    fine-tune: 1
+    intelligence: 1
+    prompts: 1
+    smart: 1

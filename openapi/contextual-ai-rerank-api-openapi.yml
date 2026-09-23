@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Contextual AI Platform Agents Rerank API
+  title: Contextual AI Platform Rerank API
   description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
   termsOfService: https://contextual.ai/terms-of-service/
   contact:
@@ -41,13 +41,6 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
     RerankRequest:
       type: object
       required:
@@ -78,6 +71,13 @@ components:
           items:
             type: string
           description: Per-document metadata, matching the documents array length.
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
     RerankResponse:
       type: object
       properties:

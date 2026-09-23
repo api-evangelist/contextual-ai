@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Contextual AI Platform Agents Parse API
+  title: Contextual AI Platform Parse API
   description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
   termsOfService: https://contextual.ai/terms-of-service/
   contact:
@@ -131,19 +131,6 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    ParseJobResponse:
-      type: object
-      properties:
-        job_id:
-          type: string
-          format: uuid
     ParseStatusResponse:
       type: object
       properties:
@@ -151,19 +138,19 @@ components:
           $ref: '#/components/schemas/ParseJobStatus'
         file_name:
           type: string
-    ValidationErrorDetail:
+    ParseJobResponse:
       type: object
       properties:
-        loc:
+        job_id:
+          type: string
+          format: uuid
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
           type: array
           items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
+            $ref: '#/components/schemas/ValidationErrorDetail'
     ParseResultResponse:
       type: object
       properties:
@@ -188,6 +175,19 @@ components:
       - completed
       - failed
       - cancelled
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
   responses:
     ValidationError:
       description: Validation error.
