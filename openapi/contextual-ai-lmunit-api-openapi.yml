@@ -49,6 +49,19 @@ components:
           minimum: 1
           maximum: 5
           description: Continuous score from 1 (strongly fails) to 5 (strongly passes).
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     HTTPValidationError:
       type: object
       properties:
@@ -72,19 +85,6 @@ components:
         unit_test:
           type: string
           description: Natural-language statement to evaluate the response against.
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
   responses:
     ValidationError:
       description: Validation error.

@@ -138,19 +138,19 @@ components:
           $ref: '#/components/schemas/ParseJobStatus'
         file_name:
           type: string
-    ParseJobResponse:
+    ValidationErrorDetail:
       type: object
       properties:
-        job_id:
-          type: string
-          format: uuid
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
+        loc:
           type: array
           items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     ParseResultResponse:
       type: object
       properties:
@@ -175,19 +175,19 @@ components:
       - completed
       - failed
       - cancelled
-    ValidationErrorDetail:
+    ParseJobResponse:
       type: object
       properties:
-        loc:
+        job_id:
+          type: string
+          format: uuid
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
           type: array
           items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
+            $ref: '#/components/schemas/ValidationErrorDetail'
   responses:
     ValidationError:
       description: Validation error.

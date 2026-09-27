@@ -118,6 +118,56 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
+    ListAgentsResponse:
+      type: object
+      properties:
+        agents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agent'
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    CreateAgentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    Agent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
     CreateAgentRequest:
       type: object
       required:
@@ -153,28 +203,6 @@ components:
             format: uuid
         template_name:
           type: string
-    CreateAgentResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-    ListAgentsResponse:
-      type: object
-      properties:
-        agents:
-          type: array
-          items:
-            $ref: '#/components/schemas/Agent'
-        next_cursor:
-          type:
-          - string
-          - 'null'
     EditAgentRequest:
       type: object
       properties:
@@ -193,21 +221,6 @@ components:
           items:
             type: string
             format: uuid
-    Agent:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        description:
-          type: string
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
     HTTPValidationError:
       type: object
       properties:
@@ -215,19 +228,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ValidationErrorDetail'
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
   parameters:
     AgentId:
       name: agent_id
@@ -237,13 +244,6 @@ components:
         type: string
         format: uuid
       description: ID of the agent.
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
   securitySchemes:
     bearerAuth:
       type: http

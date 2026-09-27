@@ -41,19 +41,38 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    Message:
       type: object
+      required:
+      - role
+      - content
       properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+        content:
+          type: string
     GenerateResponse:
       type: object
       properties:
         response:
           type: string
           description: The model's answer to the user's final message.
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     GenerateRequest:
       type: object
       required:
@@ -96,32 +115,13 @@ components:
           minimum: 1
           maximum: 2048
           default: 1024
-    Message:
-      type: object
-      required:
-      - role
-      - content
-      properties:
-        role:
-          type: string
-          enum:
-          - user
-          - assistant
-        content:
-          type: string
-    ValidationErrorDetail:
+    HTTPValidationError:
       type: object
       properties:
-        loc:
+        detail:
           type: array
           items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
+            $ref: '#/components/schemas/ValidationErrorDetail'
   responses:
     ValidationError:
       description: Validation error.

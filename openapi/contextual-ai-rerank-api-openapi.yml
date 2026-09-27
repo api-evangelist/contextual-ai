@@ -41,6 +41,32 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
+    RerankResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              index:
+                type: integer
+              relevance_score:
+                type: number
+                format: double
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     RerankRequest:
       type: object
       required:
@@ -78,32 +104,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ValidationErrorDetail'
-    RerankResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            type: object
-            properties:
-              index:
-                type: integer
-              relevance_score:
-                type: number
-                format: double
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
   responses:
     ValidationError:
       description: Validation error.
