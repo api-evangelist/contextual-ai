@@ -41,14 +41,6 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
-    LMUnitResponse:
-      type: object
-      properties:
-        score:
-          type: number
-          minimum: 1
-          maximum: 5
-          description: Continuous score from 1 (strongly fails) to 5 (strongly passes).
     ValidationErrorDetail:
       type: object
       properties:
@@ -85,6 +77,14 @@ components:
         unit_test:
           type: string
           description: Natural-language statement to evaluate the response against.
+    LMUnitResponse:
+      type: object
+      properties:
+        score:
+          type: number
+          minimum: 1
+          maximum: 5
+          description: Continuous score from 1 (strongly fails) to 5 (strongly passes).
   responses:
     ValidationError:
       description: Validation error.

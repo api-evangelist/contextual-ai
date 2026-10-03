@@ -96,15 +96,6 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
-  parameters:
-    DatastoreId:
-      name: datastore_id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: ID of the datastore.
   schemas:
     CreateDatastoreResponse:
       type: object
@@ -125,26 +116,6 @@ components:
           type: string
         type:
           type: string
-    ListDatastoresResponse:
-      type: object
-      properties:
-        datastores:
-          type: array
-          items:
-            $ref: '#/components/schemas/Datastore'
-        next_cursor:
-          type:
-          - string
-          - 'null'
-    CreateDatastoreRequest:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        configuration:
-          type: object
     Datastore:
       type: object
       properties:
@@ -156,6 +127,17 @@ components:
         created_at:
           type: string
           format: date-time
+    ListDatastoresResponse:
+      type: object
+      properties:
+        datastores:
+          type: array
+          items:
+            $ref: '#/components/schemas/Datastore'
+        next_cursor:
+          type:
+          - string
+          - 'null'
     HTTPValidationError:
       type: object
       properties:
@@ -163,6 +145,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ValidationErrorDetail'
+    CreateDatastoreRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        configuration:
+          type: object
+  parameters:
+    DatastoreId:
+      name: datastore_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the datastore.
   responses:
     ValidationError:
       description: Validation error.

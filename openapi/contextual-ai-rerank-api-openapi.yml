@@ -67,6 +67,13 @@ components:
           type: string
         type:
           type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
     RerankRequest:
       type: object
       required:
@@ -97,13 +104,6 @@ components:
           items:
             type: string
           description: Per-document metadata, matching the documents array length.
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
   responses:
     ValidationError:
       description: Validation error.

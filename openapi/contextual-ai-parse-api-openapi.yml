@@ -131,13 +131,6 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
-    ParseStatusResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ParseJobStatus'
-        file_name:
-          type: string
     ValidationErrorDetail:
       type: object
       properties:
@@ -166,6 +159,26 @@ components:
             type: object
         document_metadata:
           type: object
+    ParseStatusResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ParseJobStatus'
+        file_name:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    ParseJobResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
     ParseJobStatus:
       type: string
       enum:
@@ -175,26 +188,6 @@ components:
       - completed
       - failed
       - cancelled
-    ParseJobResponse:
-      type: object
-      properties:
-        job_id:
-          type: string
-          format: uuid
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
   parameters:
     JobId:
       name: job_id
@@ -204,6 +197,13 @@ components:
         type: string
         format: uuid
       description: ID of the parse job.
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
   securitySchemes:
     bearerAuth:
       type: http

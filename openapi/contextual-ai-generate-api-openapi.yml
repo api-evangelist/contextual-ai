@@ -41,6 +41,19 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     Message:
       type: object
       required:
@@ -60,19 +73,13 @@ components:
         response:
           type: string
           description: The model's answer to the user's final message.
-    ValidationErrorDetail:
+    HTTPValidationError:
       type: object
       properties:
-        loc:
+        detail:
           type: array
           items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
+            $ref: '#/components/schemas/ValidationErrorDetail'
     GenerateRequest:
       type: object
       required:
@@ -115,13 +122,6 @@ components:
           minimum: 1
           maximum: 2048
           default: 1024
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
   responses:
     ValidationError:
       description: Validation error.

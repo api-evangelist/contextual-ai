@@ -81,23 +81,18 @@ paths:
           $ref: '#/components/responses/ValidationError'
 components:
   schemas:
-    FeedbackRequest:
+    ValidationErrorDetail:
       type: object
-      required:
-      - message_id
-      - feedback
       properties:
-        message_id:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
           type: string
-          format: uuid
-        feedback:
-          type: string
-          enum:
-          - thumbs_up
-          - thumbs_down
-          - flagged
-          - removed
-        explanation:
+        type:
           type: string
     Message:
       type: object
@@ -112,6 +107,29 @@ components:
           - assistant
         content:
           type: string
+    QueryResponse:
+      type: object
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+        message_id:
+          type: string
+          format: uuid
+        message:
+          $ref: '#/components/schemas/Message'
+        retrieval_contents:
+          type: array
+          items:
+            type: object
+        attributions:
+          type: array
+          items:
+            type: object
+        groundedness_scores:
+          type: array
+          items:
+            type: number
     QueryRequest:
       type: object
       required:
@@ -139,42 +157,6 @@ components:
         override_configuration:
           type: object
           description: Temporarily override agent parameters for this query.
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    QueryResponse:
-      type: object
-      properties:
-        conversation_id:
-          type: string
-          format: uuid
-        message_id:
-          type: string
-          format: uuid
-        message:
-          $ref: '#/components/schemas/Message'
-        retrieval_contents:
-          type: array
-          items:
-            type: object
-        attributions:
-          type: array
-          items:
-            type: object
-        groundedness_scores:
-          type: array
-          items:
-            type: number
     HTTPValidationError:
       type: object
       properties:
@@ -182,13 +164,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ValidationErrorDetail'
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
+    FeedbackRequest:
+      type: object
+      required:
+      - message_id
+      - feedback
+      properties:
+        message_id:
+          type: string
+          format: uuid
+        feedback:
+          type: string
+          enum:
+          - thumbs_up
+          - thumbs_down
+          - flagged
+          - removed
+        explanation:
+          type: string
   parameters:
     AgentId:
       name: agent_id
@@ -198,6 +191,13 @@ components:
         type: string
         format: uuid
       description: ID of the agent.
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
   securitySchemes:
     bearerAuth:
       type: http

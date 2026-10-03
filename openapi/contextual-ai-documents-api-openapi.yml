@@ -96,15 +96,6 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
-  parameters:
-    DatastoreId:
-      name: datastore_id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: ID of the datastore.
   schemas:
     ValidationErrorDetail:
       type: object
@@ -133,6 +124,15 @@ components:
           type: string
           format: uuid
           description: ID of the document being ingested.
+  parameters:
+    DatastoreId:
+      name: datastore_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the datastore.
   responses:
     ValidationError:
       description: Validation error.
