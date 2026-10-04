@@ -45,6 +45,7 @@ tags:
 - Grounded Language Model
 - Enterprise
 - Real-Time
+- Foundation Models
 tags_raw:
 - AI
 - RAG
@@ -52,6 +53,7 @@ tags_raw:
 - Grounded Language Model
 - Enterprise
 - Real-Time
+- Foundation Models
 created: '2026-06-20'
 modified: '2026-06-20'
 specificationVersion: '0.23'
@@ -437,6 +439,9 @@ apis:
   - type: APIReference
     url: https://docs.contextual.ai/api-reference/lmunit/lmunit
 common:
+- type: CapabilityMap
+  url: capabilities/contextual-ai-capability-edges.yml
+  name: Contextual AI Business Capability Map
 - type: AgenticAccess
   url: agentic-access/contextual-ai-agentic-access.yml
 - type: TrustCenter
