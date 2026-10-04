@@ -96,7 +96,21 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
   schemas:
+    IngestDocumentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the document being ingested.
     ValidationErrorDetail:
       type: object
       properties:
@@ -117,13 +131,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ValidationErrorDetail'
-    IngestDocumentResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: ID of the document being ingested.
   parameters:
     DatastoreId:
       name: datastore_id
@@ -133,13 +140,6 @@ components:
         type: string
         format: uuid
       description: ID of the datastore.
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
   securitySchemes:
     bearerAuth:
       type: http

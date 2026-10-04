@@ -80,33 +80,23 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
+  parameters:
+    AgentId:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: ID of the agent.
   schemas:
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    Message:
-      type: object
-      required:
-      - role
-      - content
-      properties:
-        role:
-          type: string
-          enum:
-          - user
-          - assistant
-        content:
-          type: string
     QueryResponse:
       type: object
       properties:
@@ -157,13 +147,19 @@ components:
         override_configuration:
           type: object
           description: Temporarily override agent parameters for this query.
-    HTTPValidationError:
+    ValidationErrorDetail:
       type: object
       properties:
-        detail:
+        loc:
           type: array
           items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     FeedbackRequest:
       type: object
       required:
@@ -182,22 +178,26 @@ components:
           - removed
         explanation:
           type: string
-  parameters:
-    AgentId:
-      name: agent_id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: ID of the agent.
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
+    Message:
+      type: object
+      required:
+      - role
+      - content
+      properties:
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+        content:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
   securitySchemes:
     bearerAuth:
       type: http

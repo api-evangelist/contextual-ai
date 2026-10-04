@@ -130,6 +130,13 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
   schemas:
     ValidationErrorDetail:
       type: object
@@ -144,6 +151,35 @@ components:
           type: string
         type:
           type: string
+    ParseJobStatus:
+      type: string
+      enum:
+      - pending
+      - processing
+      - retrying
+      - completed
+      - failed
+      - cancelled
+    ParseJobResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+    ParseStatusResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ParseJobStatus'
+        file_name:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
     ParseResultResponse:
       type: object
       properties:
@@ -159,35 +195,6 @@ components:
             type: object
         document_metadata:
           type: object
-    ParseStatusResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ParseJobStatus'
-        file_name:
-          type: string
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    ParseJobResponse:
-      type: object
-      properties:
-        job_id:
-          type: string
-          format: uuid
-    ParseJobStatus:
-      type: string
-      enum:
-      - pending
-      - processing
-      - retrying
-      - completed
-      - failed
-      - cancelled
   parameters:
     JobId:
       name: job_id
@@ -197,13 +204,6 @@ components:
         type: string
         format: uuid
       description: ID of the parse job.
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
   securitySchemes:
     bearerAuth:
       type: http
