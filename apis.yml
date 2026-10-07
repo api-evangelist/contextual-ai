@@ -439,6 +439,8 @@ apis:
   - type: APIReference
     url: https://docs.contextual.ai/api-reference/lmunit/lmunit
 common:
+- type: Pricing
+  url: https://contextual.ai/pricing
 - type: CapabilityMap
   url: capabilities/contextual-ai-capability-edges.yml
   name: Contextual AI Business Capability Map
