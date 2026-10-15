@@ -2,6 +2,7 @@ generated: '2026-10-13'
 method: searched
 checked:
 - https://aws.amazon.com/marketplace/
+- https://github.com/run-llama/llama_index/tree/main/llama-index-integrations
 marketplace_apps: []
 edges:
 - partner_name: AWS Marketplace
@@ -19,3 +20,22 @@ edges:
   seller_name: Contextual AI
   detected_by: sweep-cloud-marketplaces.py
   detected: '2026-10-13'
+- partner_name: LlamaIndex
+  partner: llamaindex
+  partner_match: framework
+  channel: partner-built
+  direction: partner-built
+  type: coverage
+  relationship: system-coverage
+  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/postprocessor/llama-index-postprocessor-contextual-rerank
+  coverage_role:
+  - reranker
+  framework_signals:
+    packages:
+    - llama-index-postprocessor-contextual-rerank
+    roles:
+    - reranker
+    vendor_domain: contextual.ai
+  matched_by: verified-domain-table
+  detected_by: sweep-rag-vector.py
+  first_seen: '2026-10-15'
