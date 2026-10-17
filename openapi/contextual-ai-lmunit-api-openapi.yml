@@ -40,22 +40,7 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
   schemas:
-    LMUnitResponse:
-      type: object
-      properties:
-        score:
-          type: number
-          minimum: 1
-          maximum: 5
-          description: Continuous score from 1 (strongly fails) to 5 (strongly passes).
     LMUnitRequest:
       type: object
       required:
@@ -72,6 +57,13 @@ components:
         unit_test:
           type: string
           description: Natural-language statement to evaluate the response against.
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
     ValidationErrorDetail:
       type: object
       properties:
@@ -85,13 +77,21 @@ components:
           type: string
         type:
           type: string
-    HTTPValidationError:
+    LMUnitResponse:
       type: object
       properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
+        score:
+          type: number
+          minimum: 1
+          maximum: 5
+          description: Continuous score from 1 (strongly fails) to 5 (strongly passes).
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
   securitySchemes:
     bearerAuth:
       type: http

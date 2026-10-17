@@ -106,6 +106,41 @@ components:
           type: string
         configuration:
           type: object
+    CreateDatastoreResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    ListDatastoresResponse:
+      type: object
+      properties:
+        datastores:
+          type: array
+          items:
+            $ref: '#/components/schemas/Datastore'
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    Datastore:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
     ValidationErrorDetail:
       type: object
       properties:
@@ -119,48 +154,6 @@ components:
           type: string
         type:
           type: string
-    CreateDatastoreResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-    Datastore:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-    ListDatastoresResponse:
-      type: object
-      properties:
-        datastores:
-          type: array
-          items:
-            $ref: '#/components/schemas/Datastore'
-        next_cursor:
-          type:
-          - string
-          - 'null'
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
   parameters:
     DatastoreId:
       name: datastore_id
@@ -170,6 +163,13 @@ components:
         type: string
         format: uuid
       description: ID of the datastore.
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
   securitySchemes:
     bearerAuth:
       type: http

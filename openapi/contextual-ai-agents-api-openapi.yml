@@ -117,14 +117,40 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
   schemas:
+    CreateAgentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    Agent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
     ListAgentsResponse:
       type: object
       properties:
@@ -136,6 +162,37 @@ components:
           type:
           - string
           - 'null'
+    EditAgentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        system_prompt:
+          type: string
+        suggested_queries:
+          type: array
+          items:
+            type: string
+        datastore_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    ValidationErrorDetail:
+      type: object
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     CreateAgentRequest:
       type: object
       required:
@@ -171,70 +228,13 @@ components:
             format: uuid
         template_name:
           type: string
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    Agent:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        description:
-          type: string
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-    CreateAgentResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-    EditAgentRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        system_prompt:
-          type: string
-        suggested_queries:
-          type: array
-          items:
-            type: string
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
+  responses:
+    ValidationError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTPValidationError'
   parameters:
     AgentId:
       name: agent_id
