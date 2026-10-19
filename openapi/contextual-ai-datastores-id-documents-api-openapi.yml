@@ -1,0 +1,790 @@
+openapi: 3.2.0
+info:
+  title: Endpoints /datastores/{id}/documents API
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+security:
+- BearerAuth: []
+tags:
+- name: /datastores/{id}/documents
+paths:
+  /datastores/{datastore_id}/documents:
+    post:
+      tags:
+      - /datastores/{id}/documents
+      summary: Ingest Document
+      description: 'Ingest a document into a given `Datastore`.
+
+
+        Ingestion is an asynchronous task. Returns a document `id` which can be used to track the status of the ingestion job through calls to the `GET /datastores/{datastore_id}/documents/{document_id}/metadata` API.
+
+
+        This `id` can also be used to delete the document through the `DELETE /datastores/{datastore_id}/documents/{document_id}` API.
+
+
+        `file` must be a PDF, HTML, DOC(X), PPT(X), PNG, JPG, or JPEG file. The filename must end with one of the following extensions: `.pdf`, `.html`, `.htm`, `.mhtml`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.png`, `.jpg`, `.jpeg`.'
+      operationId: ingest_document_datastores__datastore_id__documents_post
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Datastore ID of the datastore in which to ingest the document
+          title: Datastore Id
+        description: Datastore ID of the datastore in which to ingest the document
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_ingest_document_datastores__datastore_id__documents_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - /datastores/{id}/documents
+      summary: List Documents
+      description: 'Get list of documents in a given `Datastore`, including document `id`, `name`, and ingestion job `status`.
+
+
+        Performs `cursor`-based pagination if the number of documents exceeds the requested `limit`. The returned `cursor` can be passed to the next `GET /datastores/{datastore_id}/documents` call to retrieve the next set of documents.'
+      operationId: list_documents_datastores__datastore_id__documents_get
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Datastore ID of the datastore to retrieve documents for
+          title: Datastore Id
+        description: Datastore ID of the datastore to retrieve documents for
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 1000
+          minimum: 1
+          description: Maximum number of documents to return
+          default: 1000
+          title: Limit
+        description: Maximum number of documents to return
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Cursor from the previous call to list documents, used to retrieve the next set of results
+          title: Cursor
+        description: Cursor from the previous call to list documents, used to retrieve the next set of results
+      - name: ingestion_job_status
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentStatusEnum'
+          description: Filters documents whose ingestion job status matches (one of) the provided status(es).
+          title: Ingestion Job Status
+        description: Filters documents whose ingestion job status matches (one of) the provided status(es).
+      - name: uploaded_after
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Filters documents uploaded at or after specified timestamp.
+          title: Uploaded After
+        description: Filters documents uploaded at or after specified timestamp.
+      - name: uploaded_before
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Filters documents uploaded at or before specified timestamp.
+          title: Uploaded Before
+        description: Filters documents uploaded at or before specified timestamp.
+      - name: document_name_prefix
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Filters documents with the given prefix.
+          title: Document Name Prefix
+        description: Filters documents with the given prefix.
+      - name: document_name_search
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Filters documents whose name contains the search term (case-insensitive substring match).
+          title: Document Name Search
+        description: Filters documents whose name contains the search term (case-insensitive substring match).
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDocumentsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datastores/{datastore_id}/documents/{document_id}/metadata:
+    get:
+      tags:
+      - /datastores/{id}/documents
+      summary: Get Document Metadata
+      description: Get details of a given document, including its `name` and ingestion job `status`.
+      operationId: get_document_metadata_datastores__datastore_id__documents__document_id__metadata_get
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Datastore ID of the datastore from which to retrieve the document
+          title: Datastore Id
+        description: Datastore ID of the datastore from which to retrieve the document
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Document ID of the document to retrieve details for
+          title: Document Id
+        description: Document ID of the document to retrieve details for
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDescription'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - /datastores/{id}/documents
+      summary: Update Document Metadata
+      description: Post details of a given document that will enrich the chunk and be added to the context or just for filtering. If Just for filtering, start with "_" in the key.
+      operationId: update_document_metadata_datastores__datastore_id__documents__document_id__metadata_put
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Datastore ID of the datastore from which to retrieve the document
+          title: Datastore Id
+        description: Datastore ID of the datastore from which to retrieve the document
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Document ID of the document to retrieve details for
+          title: Document Id
+        description: Document ID of the document to retrieve details for
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetadataRequest'
+              description: "Metadata request in JSON format. `custom_metadata` is a flat dictionary containing one or more key-value pairs, where each value must be a primitive type (`str`, `bool`, `float`, or `int`). This function rewrites the metadata you are sending entirely. The strings with date format must stay in date format or be avoided if not in date format. The `custom_metadata.url` or `custom_metadata.link` field is automatically included in returned attributions during query time, if provided. The default maximum metadata fields that can be used is 15, contact support@contextual.ai if more is needed. The combined size of the metadata must not exceed **2 KB** when encoded as JSON. `metadata_config` is an optional dictionary that defines how each metadata field should be used — e.g., whether it's included in chunk reranking (`in_chunks`, default=False), included in the API response(`returned_in_response`, default=False), or enabled for filtering (`filterable`, default=True).\n\n**Example Request Body:**\n\n```json\n{\n\"custom_metadata\": {\n    \"topic\": \"science\",\n    \"difficulty\": 3\n},\n\"metadata_config\": {\n    \"topic\": {\n    \"in_chunks\": true,\n    \"returned_in_response\": false,\n    \"filterable\": true\n    },\n    \"difficulty\": {\n    \"filterable\": true\n    }\n}\n}\n```"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDescription'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datastores/{datastore_id}/documents/{document_id}:
+    delete:
+      tags:
+      - /datastores/{id}/documents
+      summary: Delete Document
+      description: Delete a given document from its `Datastore`. This operation is irreversible.
+      operationId: delete_document_datastores__datastore_id__documents__document_id__delete
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Datastore ID of the datastore from which to delete the document
+          title: Datastore Id
+        description: Datastore ID of the datastore from which to delete the document
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Document ID of the document to delete
+          title: Document Id
+        description: Document ID of the document to delete
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datastores/{datastore_id}/documents/{document_id}/parse:
+    get:
+      tags:
+      - /datastores/{id}/documents
+      summary: Get Parse Results
+      description: Get the parse results that are generated during ingestion for a given document. Retrieving parse results for existing documents ingested before the release of this endpoint is not supported and will return a 404 error.
+      operationId: get_parse_results_datastores__datastore_id__documents__document_id__parse_get
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Datastore ID of the datastore from which to retrieve the document
+          title: Datastore Id
+        description: Datastore ID of the datastore from which to retrieve the document
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Document ID of the document to retrieve details for
+          title: Document Id
+        description: Document ID of the document to retrieve details for
+      - name: output_types
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParseOutputFormat'
+          description: "The desired output format(s) of the parsed file. Must be `markdown-document`, `markdown-per-page`, and/or `blocks-per-page`. Specify multiple values to get multiple formats in the response. `markdown-document` parses the whole document into a single concatenated markdown output. `markdown-per-page` provides markdown output per page. `blocks-per-page` provides a structured JSON representation of the content blocks on each page, sorted by reading order.\n            "
+          default:
+          - markdown-per-page
+          title: Output Types
+        description: "The desired output format(s) of the parsed file. Must be `markdown-document`, `markdown-per-page`, and/or `blocks-per-page`. Specify multiple values to get multiple formats in the response. `markdown-document` parses the whole document into a single concatenated markdown output. `markdown-per-page` provides markdown output per page. `blocks-per-page` provides a structured JSON representation of the content blocks on each page, sorted by reading order.\n            "
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseResultsResponseV1'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datastores/{datastore_id}/chunks/{content_id}/content:
+    put:
+      tags:
+      - /datastores/{id}/documents
+      summary: Edit Chunk Content
+      description: Edit the content of a specific chunk in a datastore. This operation updates the chunk's text content and regenerates its embeddings.
+      operationId: edit_chunk_content_datastores__datastore_id__chunks__content_id__content_put
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Datastore ID of the datastore containing the chunk
+          title: Datastore Id
+        description: Datastore ID of the datastore containing the chunk
+      - name: content_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Content ID of the chunk to edit
+          title: Content Id
+        description: Content ID of the chunk to edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditChunkContentRequest'
+              description: Request body containing the new content text
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Body_ingest_document_datastores__datastore_id__documents_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+          description: File to ingest.
+        metadata:
+          type: string
+          title: Metadata
+          description: "Metadata request in stringified JSON format. `custom_metadata` is a flat dictionary containing one or more key-value pairs, where each value must be a primitive type (`str`, `bool`, `float`, or `int`). The default maximum metadata fields that can be used is 15, contact support@contextual.ai if more is needed. The combined size of the metadata must not exceed **2 KB** when encoded as JSON. The strings with date format must stay in date format or be avoided if not in date format. The `custom_metadata.url` or `link` field is automatically included in returned attributions during query time, if provided.\n\n            **Example Request Body (as returned by `json.dumps`):**\n\n            ```json\n            \"{{\n            \\\"custom_metadata\\\": {{\n                \\\"topic\\\": \\\"science\\\",\n                \\\"difficulty\\\": 3\n            }}\n            }}\"\n            ```"
+          examples:
+          - custom_metadata:
+              field1: value1
+              field2: value2
+        configuration:
+          type: string
+          title: Configuration
+          description: Overrides the datastore's default configuration for this specific document. This allows applying optimized settings tailored to the document's characteristics without changing the global datastore configuration.
+          examples:
+          - parsing:
+              figure_caption_mode: custom
+              figure_captioning_prompt: Generate a detailed caption for each figure.
+      type: object
+      required:
+      - file
+      title: Body_ingest_document_datastores__datastore_id__documents_post
+    EditChunkContentRequest:
+      properties:
+        content:
+          type: string
+          title: Content
+          description: The new content text for the chunk
+      additionalProperties: false
+      type: object
+      required:
+      - content
+      title: EditChunkContentRequest
+      description: This class contains all editable content associated with an update to a chunk.
+    MetadataFieldConfig:
+      properties:
+        in_chunks:
+          type: boolean
+          title: In Chunks
+          description: Whether to add in chunks. Defaults to True. The maximum amount of characters per metadata field that can be added to the prompt or rerank is 400. The maximum amount of metadata fields that can be added for prompt or retrieval is 10. Contact support@contextual.ai to request quota increases.
+          default: true
+        returned_in_response:
+          type: boolean
+          title: Returned In Response
+          description: Whether to add in response. Defaults to False
+          default: false
+        filterable:
+          type: boolean
+          title: Filterable
+          description: Whether to use in filtering. Defaults to True
+          default: true
+      type: object
+      title: MetadataFieldConfig
+    BlockBoundingBox:
+      properties:
+        x0:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: X0
+          description: The x-coordinate of the top-left corner of the bounding box
+        y0:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: Y0
+          description: The y-coordinate of the top-left corner of the bounding box
+        x1:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: X1
+          description: The x-coordinate of the bottom-right corner of the bounding box
+        y1:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: Y1
+          description: The y-coordinate of the bottom-right corner of the bounding box
+      type: object
+      required:
+      - x0
+      - y0
+      - x1
+      - y1
+      title: BlockBoundingBox
+      description: Normalized bounding box of a block, as relative percentages of the page width and height.
+    IngestionResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: ID of the document being ingested
+      type: object
+      required:
+      - id
+      title: IngestionResponse
+      description: Response body from POST /data/documents
+    ParseOutputFormat:
+      type: string
+      enum:
+      - markdown-document
+      - markdown-per-page
+      - blocks-per-page
+      title: ParseOutputFormat
+      description: The format of the output to be returned by the /parse endpoint.
+    GetDocumentsResponse:
+      properties:
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of available documents which would be returned by the request if no limit were specified.             Ommitted if job_id was set in the request.
+        next_cursor:
+          type: string
+          title: Next Cursor
+          description: Next cursor to continue pagination.             Ommitted if there are no more documents after these ones, or if job_id was set in the request.
+        documents:
+          items:
+            $ref: '#/components/schemas/DocumentDescription'
+          type: array
+          title: Documents
+          description: List of documents retrieved based on the user's GET request
+      type: object
+      required:
+      - documents
+      title: GetDocumentsResponse
+      description: Response body from GET /data/documents
+    DocumentHierarchy:
+      properties:
+        blocks:
+          items:
+            $ref: '#/components/schemas/ParsedBlock'
+          type: array
+          title: Heading Blocks
+          description: Heading blocks which define the hierarchy of the document
+        table_of_contents:
+          type: string
+          title: Markdown Table of Contents
+          description: Markdown representation of the table of contents for this document
+      additionalProperties: false
+      type: object
+      title: DocumentHierarchy
+      description: Document hierarchy within the parsed document
+    ParsedBlockConfidenceLevel:
+      type: string
+      enum:
+      - low
+      - medium
+      - high
+      title: ParsedBlockConfidenceLevel
+      description: The confidence level of a parsed block.
+    ParsedBlockType:
+      type: string
+      enum:
+      - heading
+      - text
+      - table
+      - figure
+      title: ParsedBlockType
+      description: The type of a parsed block.
+    ParsedBlock:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Block ID
+          description: Unique ID of the block
+        type:
+          $ref: '#/components/schemas/ParsedBlockType'
+          title: Block Type
+          description: The type of the block
+        bounding_box:
+          $ref: '#/components/schemas/BlockBoundingBox'
+          title: Bounding Box
+          description: The normalized bounding box of the block, as relative percentages of the page width and height
+        markdown:
+          type: string
+          title: Block Markdown
+          description: The Markdown representation of the block
+        confidence_level:
+          $ref: '#/components/schemas/ParsedBlockConfidenceLevel'
+          title: Table Confidence Level
+          description: The confidence level of this block categorized as 'low', 'medium', or 'high'. Only available for blocks of type 'table' currently.
+          examples:
+          - high
+        page_index:
+          type: integer
+          title: Page Index
+          description: The page (0-indexed) that this block belongs to. Only set for heading blocks that are returned in the table of contents.
+        parent_ids:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Parent Block IDs
+          description: The IDs of the parent in the document hierarchy, sorted from root-level to bottom. For root-level heading blocks, this will be an empty list. Only present if `enable_document_hierarchy` was set to true in the request.
+        hierarchy_level:
+          type: integer
+          title: Block Hierarchy Level
+          description: The level of the block in the document hierarchy, starting at 0 for the root-level title block. Only present if `enable_document_hierarchy` was set to true in the request.
+      type: object
+      required:
+      - id
+      - type
+      - bounding_box
+      - markdown
+      title: ParsedBlock
+      description: One logical block of content from a parsed page.
+    DocumentDescription:
+      properties:
+        custom_metadata:
+          additionalProperties:
+            anyOf:
+            - type: boolean
+            - type: number
+            - type: integer
+            - type: string
+            - items:
+                type: number
+              type: array
+          type: object
+          title: Custom Metadata
+          description: Custom metadata for the document, provided by the user at ingestion time.Must be a JSON-serializable dictionary with string keys and simple primitive values (str, int, float, bool). The total size must not exceed 2 KB.The strings with date format must stay in date format or be avodied if not in date format.The 'custom_metadata.url' field is automatically included in returned attributions during query time, if provided.The default maximum metadata fields that can be used is 15, contact support if more is needed.
+        custom_metadata_config:
+          additionalProperties:
+            $ref: '#/components/schemas/MetadataFieldConfig'
+          type: object
+          title: Custom Metadata Config
+          description: 'A dictionary mapping metadata field names to the configuration to use for each field. If a metadata field is not present in the dictionary, the default configuration will be used. If the dictionary is not provided, metadata will be added in context for rerank and generation but will not be returned back to the user in retrievals in query API. Limits:
+
+            - Maximum characters per metadata field (for prompt or rerank): **400**
+
+            - Maximum number of metadata fields (for prompt or retrieval): **10** Contact support@contextual.ai to request quota increases.'
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: ID of the document that was ingested
+        name:
+          type: string
+          title: Name
+          description: User specified name of the document
+        status:
+          $ref: '#/components/schemas/DocumentStatusEnum'
+          description: Status of this document's ingestion job
+        created_at:
+          type: string
+          title: Created At
+          description: Timestamp of when the document was created in ISO format.
+        updated_at:
+          type: string
+          title: Updated At
+          description: Timestamp of when the document was modified in ISO format.
+        ingestion_config:
+          title: Ingestion Config
+          description: Ingestion configuration for the document when the document was ingested. It may be different from the current datastore configuration.
+        has_access:
+          type: boolean
+          title: Has Access
+          description: Whether the user has access to this document.
+          default: true
+      type: object
+      required:
+      - id
+      - name
+      - status
+      - created_at
+      title: DocumentDescription
+      description: Document description
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ParsedPage:
+      properties:
+        index:
+          type: integer
+          title: Page Index
+          description: The index of the parsed page (zero-indexed)
+          examples:
+          - 0
+        markdown:
+          type: string
+          title: Markdown
+          description: The parsed, structured Markdown of this page. Present if `markdown-per-page` was among the requested output types.
+        blocks:
+          items:
+            $ref: '#/components/schemas/ParsedBlock'
+          type: array
+          title: Blocks
+          description: The parsed, structured blocks of this page. Present if `blocks-per-page` was among the requested output types.
+      type: object
+      required:
+      - index
+      title: ParsedPage
+      description: Per-page parse results.
+    ParseResultsResponseV1:
+      properties:
+        file_name:
+          type: string
+          title: File Name
+          description: The name of the file that was uploaded for parsing
+        status:
+          $ref: '#/components/schemas/DocumentStatusEnum'
+          title: Job Status
+          description: The current status of the parse job
+          examples:
+          - completed
+        pages:
+          items:
+            $ref: '#/components/schemas/ParsedPage'
+          type: array
+          title: Parsed Pages
+          description: Per-page parse results, containing per-page Markdown (if `markdown-per-page` was requested) and/or per-page `ParsedBlock`s (if `blocks-per-page` was requested).
+        markdown_document:
+          type: string
+          title: Parsed Markdown File
+          description: The parsed, structured Markdown of the input file. Only present if `markdown-document` was among the requested output types.
+        document_metadata:
+          $ref: '#/components/schemas/DocumentMetadata'
+          title: Document Metadata
+          description: Document-level metadata parsed from the document
+      type: object
+      required:
+      - file_name
+      - status
+      title: ParseResultsResponseV1
+      description: /parse results reponse object.
+    MetadataRequest:
+      properties:
+        custom_metadata:
+          additionalProperties:
+            anyOf:
+            - type: boolean
+            - type: number
+            - type: integer
+            - type: string
+            - items:
+                type: number
+              type: array
+          type: object
+          title: Custom Metadata
+          description: Custom metadata for the document, provided by the user at ingestion time.Must be a JSON-serializable dictionary with string keys and simple primitive values (str, int, float, bool). The total size must not exceed 2 KB.The strings with date format must stay in date format or be avodied if not in date format.The 'custom_metadata.url' field is automatically included in returned attributions during query time, if provided.The default maximum metadata fields that can be used is 15, contact support if more is needed.
+        custom_metadata_config:
+          additionalProperties:
+            $ref: '#/components/schemas/MetadataFieldConfig'
+          type: object
+          title: Custom Metadata Config
+          description: 'A dictionary mapping metadata field names to the configuration to use for each field. If a metadata field is not present in the dictionary, the default configuration will be used. If the dictionary is not provided, metadata will be added in context for rerank and generation but will not be returned back to the user in retrievals in query API. Limits:
+
+            - Maximum characters per metadata field (for prompt or rerank): **400**
+
+            - Maximum number of metadata fields (for prompt or retrieval): **10** Contact support@contextual.ai to request quota increases.'
+      additionalProperties: false
+      type: object
+      title: MetadataRequest
+      description: This class contains all queries associated with metadata request for a doc.
+    DocumentStatusEnum:
+      type: string
+      enum:
+      - pending
+      - processing
+      - retrying
+      - completed
+      - failed
+      - cancelled
+      title: DocumentStatusEnum
+    DocumentMetadata:
+      properties:
+        hierarchy:
+          $ref: '#/components/schemas/DocumentHierarchy'
+          title: Hierarchy
+          description: Hierarchy of the document, as both heading blocks and a markdown table of contents
+      type: object
+      title: DocumentMetadata
+      description: Metadata about the document that was parsed.
+    EmptyResponse:
+      properties: {}
+      type: object
+      title: EmptyResponse
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key

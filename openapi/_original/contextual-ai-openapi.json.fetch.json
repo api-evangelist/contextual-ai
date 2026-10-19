@@ -1,0 +1,12 @@
+{
+ "url": "https://docs.contextual.ai/api-reference/openapi.json",
+ "final": "https://docs.contextual.ai/api-reference/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 293335,
+ "sha256": "4abdda722de9218c72c96f5d6428843e29aa8bdfd9611ffbc3f2ee30286e878b",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

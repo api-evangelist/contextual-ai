@@ -1,118 +1,149 @@
 openapi: 3.2.0
 info:
-  title: Contextual AI Platform Rerank API
-  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
-  termsOfService: https://contextual.ai/terms-of-service/
-  contact:
-    name: Contextual AI Support
-    url: https://docs.contextual.ai
-    email: support@contextual.ai
+  title: Endpoints /rerank API
   version: '1.0'
 servers:
 - url: https://api.contextual.ai/v1
-  description: Contextual AI production API
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
-- name: Rerank
-  description: Instruction-following reranking of retrieved passages.
+- name: /rerank
 paths:
   /rerank:
     post:
-      operationId: rerank
       tags:
-      - Rerank
+      - /rerank
       summary: Rerank
-      description: Rerank a set of documents against a query using the instruction-following reranker. Optionally steer ranking with a natural-language instruction.
+      description: 'Rank a list of documents according to their relevance to a query primarily and your custom instructions secondarily. We evaluated the model on instructions for recency, document type, source, and metadata, and it can generalize to other instructions as well. The reranker supports multilinguality.
+
+
+        The total request cannot exceed 400,000 tokens. The combined length of the query, instruction and any document with its metadata must not exceed 8,000 tokens.
+
+
+        See our blog post and code examples. Email rerank-feedback@contextual.ai with any feedback or questions.'
+      operationId: rerank_rerank_post
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RerankRequest'
+              $ref: '#/components/schemas/RerankRequestV1'
+        required: true
       responses:
         '200':
-          description: Reranked results.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RerankResponse'
+                $ref: '#/components/schemas/RerankResponseV1'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    RerankRequest:
+    RerankedResultItem:
+      properties:
+        index:
+          type: integer
+          title: Index
+          description: Index of the document in the input list, starting with 0
+        relevance_score:
+          type: number
+          title: Relevance Score
+          description: Relevance scores assess how likely a document is to have information that is helpful to answer the query. Our model outputs the scores in a wide range, and we normalize scores to a 0-1 scale and truncate the response to 8 decimal places. Our reranker is designed for RAG, so its purpose is to check whether a document has information that is helpful to answer the query. A reranker that is designed for direct Q&A (Question & Answer) would behave differently.
+      type: object
+      required:
+      - index
+      - relevance_score
+      title: RerankedResultItem
+      description: Reranked result object.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    RerankRequestV1:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: The string against which documents will be ranked for relevance
+        documents:
+          items:
+            type: string
+          type: array
+          minItems: 1
+          title: Documents
+          description: The texts to be reranked according to their relevance to the query and the optional instruction
+        model:
+          type: string
+          title: Model
+          description: 'The version of the reranker to use. Currently, we have: "ctxl-rerank-v2-instruct-multilingual", "ctxl-rerank-v2-instruct-multilingual-mini", "ctxl-rerank-v1-instruct".'
+        top_n:
+          type: integer
+          title: Top N
+          description: The number of top-ranked results to return
+        instruction:
+          type: string
+          title: Instruction
+          description: 'Instructions that the reranker references when ranking documents, after considering relevance. We evaluated the model on instructions for recency, document type, source, and metadata, and it can generalize to other instructions as well. For instructions related to recency and timeframe, specify the timeframe (e.g., instead of saying "this year") because the reranker doesn''t know the current date. Example: "Prioritize internal sales documents over market analysis reports. More recent documents should be weighted higher. Enterprise portal content supersedes distributor communications."'
+        metadata:
+          items:
+            type: string
+          type: array
+          minLength: 1
+          title: Metadata
+          description: Metadata for documents being passed to the reranker. Must be the same length as the documents list. If a document does not have metadata, add an empty string.
+      additionalProperties: false
       type: object
       required:
       - query
       - documents
       - model
-      properties:
-        query:
-          type: string
-        documents:
-          type: array
-          items:
-            type: string
-        model:
-          type: string
-          enum:
-          - ctxl-rerank-v2-instruct-multilingual
-          - ctxl-rerank-v2-instruct-multilingual-mini
-          - ctxl-rerank-v1-instruct
-        top_n:
-          type: integer
-          minimum: 1
-        instruction:
-          type: string
-          description: Natural-language directive steering the ranking.
-        metadata:
-          type: array
-          items:
-            type: string
-          description: Per-document metadata, matching the documents array length.
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    RerankResponse:
-      type: object
+      title: RerankRequestV1
+      description: Rerank input request object.
+    RerankResponseV1:
       properties:
         results:
-          type: array
           items:
-            type: object
-            properties:
-              index:
-                type: integer
-              relevance_score:
-                type: number
-                format: double
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
+            $ref: '#/components/schemas/RerankedResultItem'
+          type: array
+          title: Reranked Results
+          description: The ranked list of documents containing the index of the document and the relevance score, sorted by relevance score.
+      type: object
+      required:
+      - results
+      title: RerankResponseV1
+      description: Rerank output response.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
-      description: Contextual AI API key supplied as a Bearer token.
+      bearerFormat: API Key

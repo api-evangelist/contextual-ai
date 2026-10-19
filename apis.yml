@@ -100,48 +100,6 @@ apis:
     url: https://docs.contextual.ai/how-to-guides/lmunit
   - type: APIReference
     url: https://docs.contextual.ai/api-reference/lmunit/lmunit
-- aid: contextual-ai:contextual-ai-agents-query-api
-  name: Contextual AI Agents Query API
-  description: Query agents for grounded responses, retrievals, metrics, and feedback.
-  humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
-  baseURL: https://api.contextual.ai/v1
-  tags:
-  - Agents Query
-  properties:
-  - type: OpenAPI
-    url: openapi/contextual-ai-agents-query-api-openapi.yml
-  - type: Documentation
-    url: https://docs.contextual.ai/user-guides/beginner-guide
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/agents/create-agent
-  - type: PostmanCollection
-    url: collections/contextual-ai.postman_collection.json
-  - type: Documentation
-    url: https://docs.contextual.ai/api-reference/agents-query/query
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/agents-query/query
-  - type: AsyncAPI
-    url: asyncapi/contextual-ai-asyncapi.yml
-  - type: Documentation
-    url: https://docs.contextual.ai/api-reference/datastores/create-datastore
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/datastores-documents/ingest-document
-  - type: Documentation
-    url: https://docs.contextual.ai/api-reference/generate/generate
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/generate/generate
-  - type: Documentation
-    url: https://docs.contextual.ai/how-to-guides/rerank
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/rerank/rerank
-  - type: Documentation
-    url: https://docs.contextual.ai/how-to-guides/parse
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/parse/parse-file
-  - type: Documentation
-    url: https://docs.contextual.ai/how-to-guides/lmunit
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/lmunit/lmunit
 - aid: contextual-ai:contextual-ai-datastores-api
   name: Contextual AI Datastores API
   description: Create and manage datastores that hold ingested knowledge.
@@ -152,48 +110,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/contextual-ai-datastores-api-openapi.yml
-  - type: Documentation
-    url: https://docs.contextual.ai/user-guides/beginner-guide
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/agents/create-agent
-  - type: PostmanCollection
-    url: collections/contextual-ai.postman_collection.json
-  - type: Documentation
-    url: https://docs.contextual.ai/api-reference/agents-query/query
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/agents-query/query
-  - type: AsyncAPI
-    url: asyncapi/contextual-ai-asyncapi.yml
-  - type: Documentation
-    url: https://docs.contextual.ai/api-reference/datastores/create-datastore
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/datastores-documents/ingest-document
-  - type: Documentation
-    url: https://docs.contextual.ai/api-reference/generate/generate
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/generate/generate
-  - type: Documentation
-    url: https://docs.contextual.ai/how-to-guides/rerank
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/rerank/rerank
-  - type: Documentation
-    url: https://docs.contextual.ai/how-to-guides/parse
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/parse/parse-file
-  - type: Documentation
-    url: https://docs.contextual.ai/how-to-guides/lmunit
-  - type: APIReference
-    url: https://docs.contextual.ai/api-reference/lmunit/lmunit
-- aid: contextual-ai:contextual-ai-documents-api
-  name: Contextual AI Documents API
-  description: Ingest and manage documents within a datastore.
-  humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
-  baseURL: https://api.contextual.ai/v1
-  tags:
-  - Documents
-  properties:
-  - type: OpenAPI
-    url: openapi/contextual-ai-documents-api-openapi.yml
   - type: Documentation
     url: https://docs.contextual.ai/user-guides/beginner-guide
   - type: APIReference
@@ -406,6 +322,259 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/contextual-ai-users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/user-guides/beginner-guide
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents/create-agent
+  - type: PostmanCollection
+    url: collections/contextual-ai.postman_collection.json
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: AsyncAPI
+    url: asyncapi/contextual-ai-asyncapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/datastores/create-datastore
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/datastores-documents/ingest-document
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/rerank
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/rerank/rerank
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/parse
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/parse/parse-file
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/lmunit
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/lmunit/lmunit
+- aid: contextual-ai:contextual-ai-agents-id-query-api
+  name: Contextual AI /agents/{id}/query API
+  description: The /agents/{id}/query API from Contextual AI — 5 operation(s) for /agents/{id}/query.
+  humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
+  baseURL: https://api.contextual.ai/v1
+  tags:
+  - /agents/{id}/query
+  properties:
+  - type: OpenAPI
+    url: openapi/contextual-ai-agents-id-query-api-openapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/user-guides/beginner-guide
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents/create-agent
+  - type: PostmanCollection
+    url: collections/contextual-ai.postman_collection.json
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: AsyncAPI
+    url: asyncapi/contextual-ai-asyncapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/datastores/create-datastore
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/datastores-documents/ingest-document
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/rerank
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/rerank/rerank
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/parse
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/parse/parse-file
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/lmunit
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/lmunit/lmunit
+- aid: contextual-ai:contextual-ai-billing-api
+  name: Contextual AI /billing API
+  description: The /billing API from Contextual AI — 7 operation(s) for /billing.
+  humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
+  baseURL: https://api.contextual.ai/v1
+  tags:
+  - /billing
+  properties:
+  - type: OpenAPI
+    url: openapi/contextual-ai-billing-api-openapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/user-guides/beginner-guide
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents/create-agent
+  - type: PostmanCollection
+    url: collections/contextual-ai.postman_collection.json
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: AsyncAPI
+    url: asyncapi/contextual-ai-asyncapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/datastores/create-datastore
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/datastores-documents/ingest-document
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/rerank
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/rerank/rerank
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/parse
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/parse/parse-file
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/lmunit
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/lmunit/lmunit
+- aid: contextual-ai:contextual-ai-contents-api
+  name: Contextual AI /contents API
+  description: The /contents API from Contextual AI — 2 operation(s) for /contents.
+  humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
+  baseURL: https://api.contextual.ai/v1
+  tags:
+  - /contents
+  properties:
+  - type: OpenAPI
+    url: openapi/contextual-ai-contents-api-openapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/user-guides/beginner-guide
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents/create-agent
+  - type: PostmanCollection
+    url: collections/contextual-ai.postman_collection.json
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: AsyncAPI
+    url: asyncapi/contextual-ai-asyncapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/datastores/create-datastore
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/datastores-documents/ingest-document
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/rerank
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/rerank/rerank
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/parse
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/parse/parse-file
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/lmunit
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/lmunit/lmunit
+- aid: contextual-ai:contextual-ai-datastores-id-documents-api
+  name: Contextual AI /datastores/{id}/documents API
+  description: >-
+    The /datastores/{id}/documents API from Contextual AI — 5 operation(s) for /datastores/{id}/documents.
+  humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
+  baseURL: https://api.contextual.ai/v1
+  tags:
+  - /datastores/{id}/documents
+  properties:
+  - type: OpenAPI
+    url: openapi/contextual-ai-datastores-id-documents-api-openapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/user-guides/beginner-guide
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents/create-agent
+  - type: PostmanCollection
+    url: collections/contextual-ai.postman_collection.json
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: AsyncAPI
+    url: asyncapi/contextual-ai-asyncapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/datastores/create-datastore
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/datastores-documents/ingest-document
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/rerank
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/rerank/rerank
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/parse
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/parse/parse-file
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/lmunit
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/lmunit/lmunit
+- aid: contextual-ai:contextual-ai-extract-api
+  name: Contextual AI /extract API
+  description: The /extract API from Contextual AI — 9 operation(s) for /extract.
+  humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
+  baseURL: https://api.contextual.ai/v1
+  tags:
+  - /extract
+  properties:
+  - type: OpenAPI
+    url: openapi/contextual-ai-extract-api-openapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/user-guides/beginner-guide
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents/create-agent
+  - type: PostmanCollection
+    url: collections/contextual-ai.postman_collection.json
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/agents-query/query
+  - type: AsyncAPI
+    url: asyncapi/contextual-ai-asyncapi.yml
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/datastores/create-datastore
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/datastores-documents/ingest-document
+  - type: Documentation
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/generate/generate
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/rerank
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/rerank/rerank
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/parse
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/parse/parse-file
+  - type: Documentation
+    url: https://docs.contextual.ai/how-to-guides/lmunit
+  - type: APIReference
+    url: https://docs.contextual.ai/api-reference/lmunit/lmunit
+- aid: contextual-ai:contextual-ai-workspaces-api
+  name: Contextual AI /workspaces API
+  description: The /workspaces API from Contextual AI — 1 operation(s) for /workspaces.
+  humanURL: https://docs.contextual.ai/api-reference/agents/create-agent
+  baseURL: https://api.contextual.ai/v1
+  tags:
+  - /workspaces
+  properties:
+  - type: OpenAPI
+    url: openapi/contextual-ai-workspaces-api-openapi.yml
   - type: Documentation
     url: https://docs.contextual.ai/user-guides/beginner-guide
   - type: APIReference

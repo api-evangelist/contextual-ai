@@ -1,0 +1,1234 @@
+openapi: 3.2.0
+info:
+  title: Endpoints /agents/{id}/query API
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+security:
+- BearerAuth: []
+tags:
+- name: /agents/{id}/query
+paths:
+  /agents/{agent_id}/query/acl:
+    post:
+      tags:
+      - /agents/{id}/query
+      summary: Query
+      description: Start a conversation with an `Agent` and receive its generated response, along with relevant retrieved data and attributions.
+      operationId: Query_agents__agent_id__query_acl_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Agent ID of the agent to query
+          title: Agent Id
+        description: Agent ID of the agent to query
+      - name: retrievals_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Set to `true` to fetch retrieval content and metadata, and then skip generation of the response.
+          default: false
+          title: Retrievals Only
+        description: Set to `true` to fetch retrieval content and metadata, and then skip generation of the response.
+      - name: include_retrieval_content_text
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Set to `true` to include the text of the retrieved contents in the response. If `false`, only metadata about the retrieved contents will be included, not content text. This parameter is ignored if `retrievals_only` is `true`, in which case `content_text` will always be returned. Content text and other metadata can also be fetched separately using the `/agents/{agent_id}/query/{message_id}/retrieval/info` endpoint.
+          default: false
+          title: Include Retrieval Content Text
+        description: Set to `true` to include the text of the retrieved contents in the response. If `false`, only metadata about the retrieved contents will be included, not content text. This parameter is ignored if `retrievals_only` is `true`, in which case `content_text` will always be returned. Content text and other metadata can also be fetched separately using the `/agents/{agent_id}/query/{message_id}/retrieval/info` endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequestV1'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ACLQueryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}/query:
+    post:
+      tags:
+      - /agents/{id}/query
+      summary: Query
+      description: Start a conversation with an `Agent` and receive its generated response, along with relevant retrieved data and attributions.
+      operationId: Query_agents__agent_id__query_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Agent ID of the agent to query
+          title: Agent Id
+        description: Agent ID of the agent to query
+      - name: retrievals_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Set to `true` to fetch retrieval content and metadata, and then skip generation of the response.
+          default: false
+          title: Retrievals Only
+        description: Set to `true` to fetch retrieval content and metadata, and then skip generation of the response.
+      - name: include_retrieval_content_text
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Set to `true` to include the text of the retrieved contents in the response. If `false`, only metadata about the retrieved contents will be included, not content text. This parameter is ignored if `retrievals_only` is `true`, in which case `content_text` will always be returned. Content text and other metadata can also be fetched separately using the `/agents/{agent_id}/query/{message_id}/retrieval/info` endpoint.
+          default: false
+          title: Include Retrieval Content Text
+        description: Set to `true` to include the text of the retrieved contents in the response. If `false`, only metadata about the retrieved contents will be included, not content text. This parameter is ignored if `retrievals_only` is `true`, in which case `content_text` will always be returned. Content text and other metadata can also be fetched separately using the `/agents/{agent_id}/query/{message_id}/retrieval/info` endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequestV1'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}/query/{message_id}/retrieval/info:
+    get:
+      tags:
+      - /agents/{id}/query
+      summary: Get Retrieval Info
+      description: Return metadata of the contents used to generate the response for a given message.
+      operationId: Get_Retrieval_Info_agents__agent_id__query__message_id__retrieval_info_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the agent which sent the provided message.
+          title: Agent Id
+        description: ID of the agent which sent the provided message.
+      - name: message_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the message for which the content metadata needs to be retrieved.
+          title: Message Id
+        description: ID of the message for which the content metadata needs to be retrieved.
+      - name: content_ids
+        in: query
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: List of content ids for which to get the metadata.
+          title: Content Ids
+        description: List of content ids for which to get the metadata.
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrievalInfoQueryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}/feedback:
+    post:
+      tags:
+      - /agents/{id}/query
+      summary: Provide Feedback
+      description: Provide feedback for a generation or a retrieval. Feedback can be used to track overall `Agent` performance through the `Feedback` page in the Contextual UI, and as a basis for model fine-tuning.
+      operationId: provide_feedback_agents__agent_id__feedback_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the agent for which to provide feedback
+          title: Agent Id
+        description: ID of the agent for which to provide feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequestV0_1'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackSubmitResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}/metrics:
+    get:
+      tags:
+      - /agents/{id}/query
+      summary: Get Metrics
+      description: Returns usage and user-provided feedback data. This information can be used for data-driven improvements and optimization.
+      operationId: Get_Metrics_agents__agent_id__metrics_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Agent ID of the agent to get metrics for
+          title: Agent Id
+        description: Agent ID of the agent to get metrics for
+      - name: conversation_ids
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Filter messages by conversation ids.
+          title: Conversation Ids
+        description: Filter messages by conversation ids.
+      - name: user_emails
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Filter messages by users.
+          title: User Emails
+        description: Filter messages by users.
+      - name: created_after
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Filters messages that are created after the specified timestamp.
+          title: Created After
+        description: Filters messages that are created after the specified timestamp.
+      - name: created_before
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Filters messages that are created before specified timestamp. If both `created_after` and `created_before` are not provided, then `created_before` will be set to the current time and `created_after` will be set to the `created_before` - 2 days. If only `created_after` is provided, then `created_before` will be set to the `created_after` + 2 days. If only `created_before` is provided, then `created_after` will be set to the `created_before` - 2 days. If both `created_after` and `created_before` are provided, and the difference between them is more than 2 days, then `created_after` will be set to the `created_before` - 2 days.
+          title: Created Before
+        description: Filters messages that are created before specified timestamp. If both `created_after` and `created_before` are not provided, then `created_before` will be set to the current time and `created_after` will be set to the `created_before` - 2 days. If only `created_after` is provided, then `created_before` will be set to the `created_after` + 2 days. If only `created_before` is provided, then `created_after` will be set to the `created_before` - 2 days. If both `created_after` and `created_before` are provided, and the difference between them is more than 2 days, then `created_after` will be set to the `created_before` - 2 days.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 1000
+          description: Limits the number of messages to return.
+          default: 100
+          title: Limit
+        description: Limits the number of messages to return.
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Offset for pagination.
+          default: 0
+          title: Offset
+        description: Offset for pagination.
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StructuredOutput:
+      properties:
+        type:
+          $ref: '#/components/schemas/StructuredOutputType'
+          description: Type of the structured output. The default is JSON
+          default: JSON
+        json_schema:
+          additionalProperties: true
+          type: object
+          title: Json Schema
+          description: The output json structure.
+      additionalProperties: false
+      type: object
+      required:
+      - json_schema
+      title: StructuredOutput
+    MetadataFieldConfig:
+      properties:
+        in_chunks:
+          type: boolean
+          title: In Chunks
+          description: Whether to add in chunks. Defaults to True. The maximum amount of characters per metadata field that can be added to the prompt or rerank is 400. The maximum amount of metadata fields that can be added for prompt or retrieval is 10. Contact support@contextual.ai to request quota increases.
+          default: true
+        returned_in_response:
+          type: boolean
+          title: Returned In Response
+          description: Whether to add in response. Defaults to False
+          default: false
+        filterable:
+          type: boolean
+          title: Filterable
+          description: Whether to use in filtering. Defaults to True
+          default: true
+      type: object
+      title: MetadataFieldConfig
+    QueryResponse:
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+          title: Conversation Id
+          description: A unique identifier for the conversation. Can be passed to future `/query` calls to continue a conversation with the same message history.
+        message_id:
+          type: string
+          format: uuid
+          title: Message Id
+          description: A unique identifier for this specific message
+        message:
+          $ref: '#/components/schemas/MessageAndRole'
+          title: Message
+          description: Response to the query request
+        retrieval_contents:
+          items:
+            $ref: '#/components/schemas/RetrievalContentV0_1'
+          type: array
+          title: Retrieval Contents
+          description: Relevant content retrieved to answer the query
+        attributions:
+          items:
+            $ref: '#/components/schemas/AttributionV0_1'
+          type: array
+          title: Attributions
+          description: Attributions for the response
+        groundedness_scores:
+          items:
+            $ref: '#/components/schemas/GroundednessScore'
+          type: array
+          title: Groundedness Scores
+          description: Groundedness scores for the response
+      type: object
+      required:
+      - conversation_id
+      - retrieval_contents
+      title: QueryResponse
+      description: Response body for POST /query
+    BaseMetadataFilter:
+      properties:
+        field:
+          type: string
+          title: Field
+          description: Field name to search for in the metadata
+        operator:
+          $ref: '#/components/schemas/FilterMetadataOperator'
+          description: Operator to be used for the filter.
+        value:
+          anyOf:
+          - type: string
+          - type: integer
+          - type: number
+          - type: boolean
+          - items:
+              anyOf:
+              - type: string
+              - type: integer
+              - type: number
+              - type: boolean
+            type: array
+          - type: 'null'
+          title: Value
+          description: The value to be searched for in the field. In case of exists operator, it is not needed.
+      type: object
+      required:
+      - field
+      - operator
+      title: BaseMetadataFilter
+      description: "Defines a custom metadata filter. The expected input is a dict which can have different operators, fields and values. For example:\n\n    {\"field\": \"title\", \"operator\": \"startswith\", \"value\": \"hr-\"}\n\nUse **lowercase** for `value` when not using `equals` operator. For document_id and date_created the query is built using direct query without nesting."
+    GroundednessScore:
+      properties:
+        start_idx:
+          type: integer
+          title: Start Index
+          description: Start index of the span in the generated message
+        end_idx:
+          type: integer
+          title: End Index
+          description: End index of the span in the generated message
+        score:
+          type: integer
+          title: Score
+          description: Groundedness score for the span
+      type: object
+      required:
+      - start_idx
+      - end_idx
+      - score
+      title: GroundednessScore
+      description: Groundedness scores in a generated message`.
+    ThinkingEvent:
+      properties:
+        type:
+          type: string
+          const: thinking_event
+          title: Type
+          default: thinking_event
+        thinking_summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Thinking Summary
+          description: Thinking summary
+        duration:
+          type: number
+          title: Duration
+          description: Duration of the thinking
+      type: object
+      required:
+      - thinking_summary
+      - duration
+      title: ThinkingEvent
+      description: Thinking event for dynamic agents
+    ContextualAgentContentMetadata:
+      properties:
+        content_id:
+          type: string
+          format: uuid
+          title: Content Id
+          description: Id of the content.
+        content_type:
+          type: string
+          const: contextual_agent_response
+          title: Content Type
+          default: contextual_agent_response
+        agent_id:
+          type: string
+          title: Agent Id
+          description: Id of the agent that generated the response.
+        content_text:
+          type: string
+          title: Content Text
+          description: The text content of the agent response.
+      type: object
+      required:
+      - content_id
+      - agent_id
+      - content_text
+      title: ContextualAgentContentMetadata
+    CompositeMetadataFilter:
+      properties:
+        filters:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/BaseMetadataFilter'
+            - $ref: '#/components/schemas/CompositeMetadataFilter'
+          type: array
+          title: Filters
+          description: 'Filters added to the query for filtering docs '
+        operator:
+          anyOf:
+          - $ref: '#/components/schemas/CompositeOperator'
+          - type: 'null'
+          description: Composite operator to be used to combine filters
+      type: object
+      required:
+      - filters
+      title: CompositeMetadataFilter
+      description: '"Defines a custom metadata filter as a Composite MetadataFilter. Which can be be a list of filters or nested filters.'
+    MetricsResponse:
+      properties:
+        messages:
+          items: {}
+          type: array
+          title: Messages
+          description: List of messages.
+          default: []
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of messages.
+        next_offset:
+          type: integer
+          title: Next Offset
+          description: Offset for the next page. If there are no more messages to get, then this is not set.
+      type: object
+      required:
+      - total_count
+      title: MetricsResponse
+    FeedbackRequestV0_1:
+      properties:
+        message_id:
+          type: string
+          format: uuid
+          title: Message ID
+          description: ID of the message on which to provide feedback.
+        feedback:
+          $ref: '#/components/schemas/FeedbackStatus'
+          title: Feedback
+          description: Feedback to provide on the message. Set to "removed" to undo previously provided feedback.
+        explanation:
+          type: string
+          title: Explanation
+          description: Optional explanation for the feedback.
+        content_id:
+          type: string
+          format: uuid
+          title: Content ID
+          description: ID of the content on which to provide feedback, if feedback is on retrieval. Do not set (or set to null) while providing generation feedback.
+        query_category:
+          type: string
+          title: Query Category
+          description: The query category for the feedback.
+      additionalProperties: false
+      type: object
+      required:
+      - message_id
+      - feedback
+      title: FeedbackRequestV0_1
+      description: Input to POST feedback endpoint
+    FileAnalysisContentMetadata:
+      properties:
+        gcp_location:
+          type: string
+          title: Gcp Location
+          description: GCP location of the file.
+        file_format:
+          type: string
+          title: File Format
+          description: Format of the file.
+        content_id:
+          type: string
+          format: uuid
+          title: Content Id
+          description: Id of the content.
+        content_type:
+          type: string
+          const: file_analysis
+          title: Content Type
+          default: file_analysis
+      type: object
+      required:
+      - gcp_location
+      - file_format
+      - content_id
+      title: FileAnalysisContentMetadata
+    InnerRetrievableCtxlMetadata:
+      properties:
+        document_title:
+          type: string
+          title: Document Title
+          description: Title of the document.
+        section_title:
+          type: string
+          title: Section Title
+          description: Title of the section.
+        is_figure:
+          type: boolean
+          title: Is Figure
+          description: Whether this chunk represents a figure.
+        file_name:
+          type: string
+          title: File Name
+          description: Name of the source file.
+        chunk_size:
+          type: integer
+          title: Chunk Size
+          description: Size of the chunk in tokens or characters.
+        file_format:
+          type: string
+          title: File Format
+          description: Format of the file (e.g., PDF, DOCX).
+        page:
+          type: integer
+          title: Page
+          description: Page number in the source document.
+        chunk_id:
+          type: string
+          title: Chunk Id
+          description: Unique identifier for the chunk.
+        date_created:
+          type: string
+          title: Date Created
+          description: Date when the document or chunk was created.
+        section_id:
+          type: string
+          title: Section Id
+          description: The HTML id of the nearest element of the chunk
+      additionalProperties: true
+      type: object
+      title: InnerRetrievableCtxlMetadata
+    ACLQueryResponse:
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+          title: Conversation Id
+          description: A unique identifier for the conversation. Can be passed to future `/query` calls to continue a conversation with the same message history.
+        message_id:
+          type: string
+          format: uuid
+          title: Message Id
+          description: A unique identifier for this specific message
+        workflow_trace:
+          items:
+            $ref: '#/components/schemas/ACLWorkflowEvent'
+          type: array
+          title: Workflow Trace
+          description: Workflow trace for the response
+        dynamic_agent_trace:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/DynamicAgentEvent'
+            type: array
+          type: object
+          title: Dynamic Agent Trace
+          description: Tool calls and thinking events for the response
+        outputs:
+          additionalProperties: true
+          type: object
+          title: Outputs
+          description: Outputs of the agent
+        retrieval_contents:
+          items:
+            $ref: '#/components/schemas/RetrievalContentV0_1'
+          type: array
+          title: Retrieval Contents
+          description: Relevant content retrieved to answer the query. Only included when include_retrieval_content_text is true.
+        message:
+          $ref: '#/components/schemas/MessageAndRole'
+          title: Message
+          description: Response to the query request. Extracted from outputs['response'] if available.
+        attributions:
+          items:
+            $ref: '#/components/schemas/AttributionV0_1'
+          type: array
+          title: Attributions
+          description: Attributions for the response. Extracted from outputs['attribution_result'].attributions if available.
+        groundedness_scores:
+          items:
+            $ref: '#/components/schemas/GroundednessScore'
+          type: array
+          title: Groundedness Scores
+          description: Groundedness scores for the response. Extracted from outputs['groundedness_scores'] if available.
+        rl_training_context:
+          additionalProperties: true
+          type: object
+          title: Rl Training Context
+          description: 'RL training context for multi-turn training. Automatically included when policy_output is provided. Contains: full_message_history (complete conversation for next turn), message_history (original input), research_items (tool calls + results), tool_calls_summary (simplified), chunks_info (retrieved content).'
+      type: object
+      required:
+      - conversation_id
+      title: ACLQueryResponse
+      description: Response body for POST /query to Agent Composer
+    RetrievalContentV0_1:
+      properties:
+        custom_metadata:
+          additionalProperties:
+            anyOf:
+            - type: boolean
+            - type: number
+            - type: integer
+            - type: string
+            - items:
+                type: number
+              type: array
+          type: object
+          title: Custom Metadata
+          description: Custom metadata for the document, provided by the user at ingestion time.Must be a JSON-serializable dictionary with string keys and simple primitive values (str, int, float, bool). The total size must not exceed 2 KB.The strings with date format must stay in date format or be avodied if not in date format.The 'custom_metadata.url' field is automatically included in returned attributions during query time, if provided.The default maximum metadata fields that can be used is 15, contact support if more is needed.
+        custom_metadata_config:
+          additionalProperties:
+            $ref: '#/components/schemas/MetadataFieldConfig'
+          type: object
+          title: Custom Metadata Config
+          description: 'A dictionary mapping metadata field names to the configuration to use for each field. If a metadata field is not present in the dictionary, the default configuration will be used. If the dictionary is not provided, metadata will be added in context for rerank and generation but will not be returned back to the user in retrievals in query API. Limits:
+
+            - Maximum characters per metadata field (for prompt or rerank): **400**
+
+            - Maximum number of metadata fields (for prompt or retrieval): **10** Contact support@contextual.ai to request quota increases.'
+        number:
+          type: integer
+          title: Number
+          description: Index of the retrieved item in the retrieval_contents list (starting from 1)
+          default: 1
+        type:
+          type: string
+          title: Source
+          description: Source type of the content. Will be `file` for any docs ingested through ingestion API.
+        format:
+          type: string
+          enum:
+          - pdf
+          - html
+          - htm
+          - mhtml
+          - doc
+          - docx
+          - ppt
+          - pptx
+          title: Format
+          description: Format of the content, such as `pdf` or `html`
+        content_id:
+          type: string
+          title: Content Id
+          description: Unique identifier of the retrieved content
+        datastore_id:
+          type: string
+          title: Datastore Id
+          description: Unique identifier of the datastore
+        doc_id:
+          type: string
+          title: Doc Id
+          description: Unique identifier of the document
+        doc_name:
+          type: string
+          title: Doc Name
+          description: Name of the document
+        page:
+          type: integer
+          title: Page
+          description: Page number of the content in the document
+        content_text:
+          type: string
+          title: Content Text
+          description: Text of the retrieved content. Included in response to a query if `include_retrieval_content_text` is True
+        url:
+          type: string
+          title: Url
+          description: URL of the source content, if applicable
+        ctxl_metadata:
+          $ref: '#/components/schemas/InnerRetrievableCtxlMetadata'
+          title: Ctxl Metadata
+          description: Default metadata from the retrieval
+        score:
+          type: number
+          title: Score
+          description: Score of the retrieval, if applicable
+      type: object
+      required:
+      - type
+      - format
+      - content_id
+      - doc_id
+      - doc_name
+      title: RetrievalContentV0_1
+      description: Retrieval content object typing for v0.1 API.
+    ToolCall:
+      properties:
+        type:
+          type: string
+          const: tool_call
+          title: Type
+          default: tool_call
+        tool_name:
+          type: string
+          title: Tool Name
+          description: Name of the tool called
+        tool_args:
+          type: string
+          title: Tool Args
+          description: Arguments of the tool called
+        tool_output:
+          type: string
+          title: Tool Output
+          description: Output of the tool called
+        successful:
+          type: boolean
+          title: Successful
+          description: Whether the tool call was successful
+        error:
+          type: string
+          title: Error
+          description: Error message if the tool call was not successful
+        duration:
+          type: number
+          title: Duration
+          description: Duration of the tool call
+      type: object
+      required:
+      - tool_name
+      - tool_args
+      - successful
+      - duration
+      title: ToolCall
+      description: Tool call for the response
+    MessageAndRole:
+      properties:
+        content:
+          type: string
+          title: Content
+          description: Content of the message
+        role:
+          $ref: '#/components/schemas/SenderType'
+          description: Role of the sender
+        custom_tags:
+          items:
+            type: string
+          type: array
+          title: Custom Tags
+          description: Custom tags for the message
+      type: object
+      required:
+      - content
+      - role
+      title: MessageAndRole
+      description: Message object for a message sent or received in a conversation
+    StructuredOutputType:
+      type: string
+      enum:
+      - JSON
+      title: StructuredOutputType
+      description: This captures type of the structured data.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UnstructuredContentMetadata:
+      properties:
+        x0:
+          type: number
+          title: X0
+          description: X coordinate of the top left corner on the bounding box.
+        y0:
+          type: number
+          title: Y0
+          description: Y coordinate of the top left corner on the bounding box.
+        x1:
+          type: number
+          title: X1
+          description: X coordinate of the bottom right corner on the bounding box.
+        y1:
+          type: number
+          title: Y1
+          description: Y coordinate of the bottom right corner on the bounding box.
+        page:
+          type: integer
+          title: Page
+          description: Page number of the content.
+        page_img:
+          type: string
+          title: Page Img
+          description: Image of the page on which the content occurs.
+        width:
+          type: number
+          title: Width
+          description: Width of the image.
+        height:
+          type: number
+          title: Height
+          description: Height of the image.
+        content_id:
+          type: string
+          format: uuid
+          title: Content Id
+          description: Id of the content.
+        document_id:
+          type: string
+          format: uuid
+          title: Document Id
+          description: Id of the document which the content belongs to.
+        content_type:
+          type: string
+          const: unstructured
+          title: Content Type
+          default: unstructured
+        content_text:
+          type: string
+          title: Content Text
+          description: Text of the content.
+      type: object
+      required:
+      - x0
+      - y0
+      - x1
+      - y1
+      - page
+      - page_img
+      - width
+      - height
+      - content_id
+      - document_id
+      - content_text
+      title: UnstructuredContentMetadata
+    QueryRequestV1:
+      properties:
+        messages:
+          items:
+            $ref: '#/components/schemas/MessageAndRole'
+          type: array
+          title: Messages
+          description: Messages sent so far in the conversation, ending in the latest user message. Add multiple objects to provide conversation history. Last message in the list must be a `user`-sent message (i.e. `role` equals `"user"`).
+        stream:
+          type: boolean
+          title: Stream
+          description: Set to `true` to receive a streamed response
+          default: false
+        conversation_id:
+          type: string
+          format: uuid
+          title: Conversation Id
+          description: An optional alternative to providing message history in the `messages` field. If provided, all messages in the `messages` list prior to the latest user-sent query will be ignored.
+        llm_model_id:
+          type: string
+          title: Llm Model Id
+          description: Model ID of the specific fine-tuned or aligned LLM model to use. Defaults to base model if not specified.
+        structured_output:
+          $ref: '#/components/schemas/StructuredOutput'
+          title: Structured Output
+          description: Custom output structure format.
+        documents_filters:
+          anyOf:
+          - $ref: '#/components/schemas/BaseMetadataFilter'
+          - $ref: '#/components/schemas/CompositeMetadataFilter'
+          title: Documents Filters
+          description: "Defines an Optional custom metadata filter, which can be a list of filters or nested filters. Use **lowercase** for `value` and/or **field.keyword** for `field` when not using `equals` operator.The expected input is a nested JSON object that can represent a single filter or a composite (logical) combination of filters.\n\n Unnested Example:\n\n```json\n    \t{\n        \t\t\"operator\": \"AND\",\n        \t\t\"filters\": [\n            \t\t\t{\"field\": \"status\", \"operator\": \"equals\", \"value\": \"active\"},\n        \t\t]\n    \t}\n\n```\n\nNested example:\n\n```json\n    \t{\n        \t\t\"operator\": \"AND\",\n        \t\t\"filters\": [\n            \t\t\t{\"field\": \"status\", \"operator\": \"equals\", \"value\": \"active\"},\n            \t\t\t{\n                \t\t\t\t\"operator\": \"OR\",\n                \t\t\t\t\"filters\": [\n                    \t\t\t\t\t{\"field\": \"category\", \"operator\": \"containsany\", \"value\": [\"policy\", \"HR\"]},\n                    \t\t\t\t\t{\"field\": \"tags\", \"operator\": \"exists\"}\n                \t\t\t\t]\n            \t\t\t}\n        \t\t]\n    \t}\n\n```"
+          examples:
+          - filters:
+            - field: field1
+              operator: equals
+              value: value1
+            operator: AND
+          - filters:
+            - field: field1
+              operator: equals
+              value: value1
+            - filters:
+              - field: filed1
+                operator: containsany
+                value:
+                - value1
+                - value2
+              - field: field2
+                operator: exists
+              operator: OR
+            operator: AND
+        override_configuration:
+          $ref: '#/components/schemas/AgentEvaluationConfigOverride'
+          title: Override Configuration
+          description: This will modify select configuration parameters for the agent during the response generation.
+      additionalProperties: false
+      type: object
+      required:
+      - messages
+      title: QueryRequestV1
+      description: Request body for a POST `/agents/{agent_id}/query` request
+    FilterMetadataOperator:
+      type: string
+      enum:
+      - equals
+      - containsany
+      - exists
+      - startswith
+      - gt
+      - gte
+      - lt
+      - lte
+      - notequals
+      - between
+      - wildcard
+      title: FilterMetadataOperator
+    SenderType:
+      type: string
+      enum:
+      - user
+      - system
+      - assistant
+      - knowledge
+      title: SenderType
+    FeedbackSubmitResponse:
+      properties:
+        feedback_id:
+          type: string
+          format: uuid
+          title: Feedback ID
+          description: ID of the submitted or updated feedback.
+      type: object
+      required:
+      - feedback_id
+      title: FeedbackSubmitResponse
+      description: Response schema for feedback submission endpoint.
+    ACLWorkflowEvent:
+      properties:
+        version:
+          type: string
+          const: v0
+          title: Version
+          default: v0
+        duration:
+          type: number
+          title: Duration
+          description: Duration of the workflow event
+        name:
+          type: string
+          title: Name
+          description: Name of the workflow event
+        parent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Parent Id
+          description: ID of the parent node in the workflow
+      type: object
+      required:
+      - duration
+      - name
+      - parent_id
+      title: ACLWorkflowEvent
+    AttributionV0_1:
+      properties:
+        start_idx:
+          type: integer
+          title: Start Idx
+          description: Start index of the attributed text in the generated message
+        end_idx:
+          type: integer
+          title: End Idx
+          description: End index of the attributed text in the generated message
+        content_ids:
+          items:
+            type: string
+          type: array
+          title: Content Ids
+          description: Content IDs of the sources for the attributed text
+      type: object
+      required:
+      - start_idx
+      - end_idx
+      - content_ids
+      title: AttributionV0_1
+      description: Attribution for some claim made in a generated message`.
+    AgentEvaluationConfigOverride:
+      properties:
+        system_prompt:
+          type: string
+          title: System Prompt
+          description: Override the system prompt for the agent during evaluation.
+        filter_prompt:
+          type: string
+          title: Filter Prompt
+          description: Override the filter prompt for the agent during evaluation.
+        model:
+          type: string
+          title: Model
+          description: Override the model for the agent during evaluation.
+        max_new_tokens:
+          type: integer
+          title: Max New Tokens
+          description: Override the max new tokens for the agent during evaluation.
+        top_p:
+          type: number
+          title: Top P
+          description: Override the top_p for the query. This will override the top_p for the agent during evaluation.
+        temperature:
+          type: number
+          title: Temperature
+          description: Override the temperature for the query. This will override the temperature for the agent during evaluation.
+        top_k_retrieved_chunks:
+          type: integer
+          title: Top K Retrieved Chunks
+          description: Override the top_k for the query. This will override the top_k for the agent during evaluation.
+        top_k_reranked_chunks:
+          type: integer
+          title: Top K Reranked Chunks
+          description: Override the rerank_top_k for the query. This will override the rerank_top_k for the agent during evaluation.
+        enable_filter:
+          type: boolean
+          title: Enable Filter
+          description: Override the filter_retrievals for the query. This will override the filter_retrievals for the agent during evaluation.
+        filter_model:
+          type: string
+          title: Filter Model
+          description: Override the filter_model for the query. This will override the filter_model for the agent during evaluation.
+        enable_rerank:
+          type: boolean
+          title: Enable Rerank
+          description: Override the rerank_retrievals for the agent during evaluation.
+        reranker:
+          type: string
+          title: Reranker
+          description: Override the reranker for the agent during evaluation.
+        lexical_alpha:
+          type: number
+          title: Lexical Alpha
+          description: Override the lexical_alpha for the agent during evaluation.
+        semantic_alpha:
+          type: number
+          title: Semantic Alpha
+          description: Override the semantic_alpha for the agent during evaluation.
+        rerank_instructions:
+          type: string
+          title: Rerank Instructions
+          description: Override the rerank_instructions for the agent during evaluation.
+        reranker_score_filter_threshold:
+          type: number
+          title: Reranker Score Filter Threshold
+          description: Override the reranker_score_filter_threshold for the agent during evaluation.
+        use_optimized_context:
+          type: boolean
+          title: Use Optimized Context
+          description: Override whether to use optimized context for this request. When true, optimized context will be used if available. When false, optimized context is disabled. When null/omitted, uses the agent's configured setting.
+      additionalProperties: false
+      type: object
+      title: AgentEvaluationConfigOverride
+    StructuredContentMetadata:
+      properties:
+        content_id:
+          type: string
+          title: Content Id
+          description: Id of the content.
+        content_type:
+          type: string
+          const: structured
+          title: Content Type
+          default: structured
+        content_text:
+          title: Content Text
+          description: Text of the content.
+      type: object
+      required:
+      - content_id
+      - content_text
+      title: StructuredContentMetadata
+    FeedbackStatus:
+      type: string
+      enum:
+      - thumbs_up
+      - thumbs_down
+      - flagged
+      - removed
+      title: FeedbackStatus
+    RetrievalInfoQueryResponse:
+      properties:
+        content_metadatas:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/UnstructuredContentMetadata'
+            - $ref: '#/components/schemas/StructuredContentMetadata'
+            - $ref: '#/components/schemas/FileAnalysisContentMetadata'
+            - $ref: '#/components/schemas/ContextualAgentContentMetadata'
+            description: Content type
+            discriminator:
+              propertyName: content_type
+              mapping:
+                contextual_agent_response: '#/components/schemas/ContextualAgentContentMetadata'
+                file_analysis: '#/components/schemas/FileAnalysisContentMetadata'
+                structured: '#/components/schemas/StructuredContentMetadata'
+                unstructured: '#/components/schemas/UnstructuredContentMetadata'
+          type: array
+          title: Content Metadatas
+          description: List of content metadatas.
+          default: []
+      type: object
+      title: RetrievalInfoQueryResponse
+    CompositeOperator:
+      type: string
+      enum:
+      - AND
+      - OR
+      - AND_NOT
+      title: CompositeOperator
+    DynamicAgentEvent:
+      properties:
+        version:
+          type: string
+          const: v0
+          title: Version
+          default: v0
+        event:
+          oneOf:
+          - $ref: '#/components/schemas/ToolCall'
+          - $ref: '#/components/schemas/ThinkingEvent'
+          title: Event
+          discriminator:
+            propertyName: type
+            mapping:
+              thinking_event: '#/components/schemas/ThinkingEvent'
+              tool_call: '#/components/schemas/ToolCall'
+      type: object
+      required:
+      - event
+      title: DynamicAgentEvent
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key

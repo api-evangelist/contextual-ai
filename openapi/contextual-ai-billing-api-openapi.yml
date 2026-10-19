@@ -1,0 +1,541 @@
+openapi: 3.2.0
+info:
+  title: Endpoints /billing API
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+security:
+- BearerAuth: []
+tags:
+- name: /billing
+paths:
+  /billing/balance:
+    get:
+      tags:
+      - /billing
+      summary: Get Balance
+      description: Get the remaining balance for a tenant
+      operationId: get_balance_billing_balance_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+  /billing/balance/top-ups:
+    get:
+      tags:
+      - /billing
+      summary: Get Top Up History Endpoint
+      description: Get the top-up history for a tenant. Paginated.
+      operationId: get_top_up_history_endpoint_billing_balance_top_ups_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          default: 10
+          title: Limit
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTopUpHistoryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /billing/usages/monthly:
+    get:
+      tags:
+      - /billing
+      summary: Get Monthly Usage Endpoint
+      description: 'Get monthly usage data for a tenant with validation for year and month parameters.
+
+
+        Args: request: Request object containing year and month with validation user_context: User context with tenant admin permissions resource_id: Optional[UUID]. If provided, get usage data for a specific resource. Otherwise, get aggregated usage data across all resources.
+
+
+        Returns: Monthly usage records for the specified month and year'
+      operationId: get_monthly_usage_endpoint_billing_usages_monthly_get
+      parameters:
+      - name: year
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 2025
+          title: Year
+      - name: month
+        in: query
+        required: true
+        schema:
+          type: integer
+          maximum: 12
+          minimum: 1
+          title: Month
+      - name: resource_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Resource Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlyUsageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /billing/usages/acl:
+    get:
+      tags:
+      - /billing
+      summary: Get Agent Composer Step Usage
+      description: 'Get Agent Composer step-level usage data for a specific month.
+
+
+        This API returns daily usages of advance queries grouped by steps. The data is used for visualization purposes to show users which Agent Composer steps were executed and their associated costs and token consumption.
+
+
+        Note: The costs returned here are already included in the ACL_COST entry from the daily_usages table and should not be double-counted in billing.
+
+
+        Args: request: Request object containing year, month, and optional resource_id user_context: User context with tenant admin permissions
+
+
+        Returns: Agent Composer step usage data aggregated by step and date'
+      operationId: get_acl_step_usage_endpoint_billing_usages_acl_get
+      parameters:
+      - name: year
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 2025
+          title: Year
+      - name: month
+        in: query
+        required: true
+        schema:
+          type: integer
+          maximum: 12
+          minimum: 1
+          title: Month
+      - name: resource_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Resource Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentComposerStepUsageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /billing/usages/earliest_date:
+    get:
+      tags:
+      - /billing
+      summary: Get Earliest Usage Date Endpoint
+      description: Get the earliest usage date for a tenant
+      operationId: get_earliest_usage_date_endpoint_billing_usages_earliest_date_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EarliestUsageDateResponse'
+  /billing/billing_mode/history:
+    get:
+      tags:
+      - /billing
+      summary: Get Billing Mode History
+      description: 'Get the billing mode history for a tenant for a specific month.
+
+
+        Args: request: Request object containing year and month with validation user_context: User context with tenant admin permissions
+
+
+        Returns: Billing mode history records for the specified month and year Returns at least one entry which is the mode of the first date of the given month, with potential mode changes in the middle of the month. If no record found, defaults to LEGACY mode.'
+      operationId: get_billing_mode_history_billing_billing_mode_history_get
+      parameters:
+      - name: year
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 2025
+          title: Year
+      - name: month
+        in: query
+        required: true
+        schema:
+          type: integer
+          maximum: 12
+          minimum: 1
+          title: Month
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingModeHistoryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /billing/metadata:
+    get:
+      tags:
+      - /billing
+      summary: Get Billing Metadata
+      description: Non admin endpoint for getting the billing metadata for a tenant.
+      operationId: get_billing_metadata_billing_metadata_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingMetadataResponse'
+components:
+  schemas:
+    GetTopUpHistoryResponse:
+      properties:
+        top_ups:
+          items:
+            $ref: '#/components/schemas/TopUpHistoryResponse'
+          type: array
+          title: Top Ups
+          description: List of top-ups
+        has_more:
+          type: boolean
+          title: Has More
+          description: Whether there are more top-ups to fetch
+        cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+          description: Cursor for next page
+      type: object
+      required:
+      - top_ups
+      - has_more
+      title: GetTopUpHistoryResponse
+      description: Response to GET /billing/free-credit request
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    MonthlyUsageResponse:
+      properties:
+        usages:
+          items:
+            $ref: '#/components/schemas/DailyUsage'
+          type: array
+          title: Usages
+          description: List of daily usages
+      type: object
+      required:
+      - usages
+      title: MonthlyUsageResponse
+      description: Response to GET /billing/usage/monthly request
+    BillingModeHistoryResponse:
+      properties:
+        billing_modes:
+          items:
+            $ref: '#/components/schemas/BillingModeHistoryEntry'
+          type: array
+          title: Billing Modes
+          description: List of billing mode entries for the specified month
+      type: object
+      required:
+      - billing_modes
+      title: BillingModeHistoryResponse
+      description: Response to GET /billing/billing_mode/history request
+    DailyUsage:
+      properties:
+        date:
+          type: string
+          format: date
+          title: Date
+          description: Date of the usage
+        usage_type:
+          $ref: '#/components/schemas/UsageType'
+          description: Type of usage
+        quantity:
+          type: integer
+          title: Quantity
+          description: Usage quantity
+        price:
+          type: number
+          title: Price
+          description: Price per unit
+      type: object
+      required:
+      - date
+      - usage_type
+      - quantity
+      - price
+      title: DailyUsage
+      description: ''
+    UsageType:
+      type: string
+      enum:
+      - QUERY_REFORMULATION_INPUT_TOKEN
+      - QUERY_REFORMULATION_OUTPUT_TOKEN
+      - QUERY_EXPANSION_INPUT_TOKEN
+      - QUERY_EXPANSION_OUTPUT_TOKEN
+      - QUERY_FILTER_TOKEN
+      - QUERY_RETRIEVAL_TOKEN
+      - QUERY_RERANK_TOKEN
+      - QUERY_GENERATION_INPUT_TOKEN
+      - QUERY_GENERATION_OUTPUT_TOKEN
+      - QUERY_CONTEXTUALIZATION_TOKEN
+      - QUERY_GROUNDEDNESS_TOKEN
+      - QUERY_PLANNING_INPUT_TOKEN
+      - QUERY_PLANNING_OUTPUT_TOKEN
+      - QUERY_TRANSLATION_INPUT_TOKEN
+      - QUERY_TRANSLATION_OUTPUT_TOKEN
+      - QUERY_REQUEST
+      - TUNE_REQUEST
+      - EVAL_REQUEST
+      - INGEST_BASIC_PAGE
+      - INGEST_STANDARD_PAGE
+      - INGEST_V3_STANDARD_PAGE
+      - INGEST_V3_ADVANCED_PAGE
+      - INGEST_V3_PREMIUM_PAGE
+      - PARSE_BASIC_PAGE
+      - PARSE_STANDARD_PAGE
+      - RERANK_TOKEN
+      - RERANK_V2_MINI_TOKEN
+      - RERANK_V2_TOKEN
+      - GENERATE_INPUT_TOKEN
+      - GENERATE_OUTPUT_TOKEN
+      - LMUNIT_TOKEN
+      - ACL_COST
+      - STRUCTURED_EXTRACTION_COST
+      - STRUCTURED_EXTRACTION_INPUT_TOKENS
+      - STRUCTURED_EXTRACTION_OUTPUT_TOKENS
+      - STRUCTURED_EXTRACTION_CACHED_TOKENS
+      - STRUCTURED_EXTRACTION_REASONING_TOKENS
+      title: UsageType
+    BillingMetadataResponse:
+      properties:
+        is_low_balance:
+          type: boolean
+          title: Is Low Balance
+          description: Whether the user is low on balance
+        is_auto_top_up_enabled:
+          type: boolean
+          title: Is Auto Top Up Enabled
+          description: Whether auto top-up is enabled
+      type: object
+      required:
+      - is_low_balance
+      - is_auto_top_up_enabled
+      title: BillingMetadataResponse
+      description: Response to GET /billing/metadata request
+    BalanceResponse:
+      properties:
+        balance:
+          type: number
+          title: Balance
+          description: Balance of the user
+      type: object
+      required:
+      - balance
+      title: BalanceResponse
+      description: Response to GET /billing/balance request
+    BillingModeHistoryEntry:
+      properties:
+        date:
+          type: string
+          format: date
+          title: Date
+          description: Date (yyyy-mm-dd) when the billing mode became effective
+        billing_mode:
+          $ref: '#/components/schemas/BillingMode'
+          description: Billing mode
+      type: object
+      required:
+      - date
+      - billing_mode
+      title: BillingModeHistoryEntry
+      description: Individual billing mode entry
+    BillingMode:
+      type: string
+      enum:
+      - ON_DEMAND_PREPAID
+      - ON_DEMAND_PAY_ARREARS
+      - PROVISION_THROUGHPUT
+      - LEGACY
+      title: BillingMode
+    AgentComposerStepUsageResponse:
+      properties:
+        usages:
+          items:
+            $ref: '#/components/schemas/AgentComposerStepUsage'
+          type: array
+          title: Usages
+          description: List of Agent Composer step usages aggregated by step and date
+      type: object
+      required:
+      - usages
+      title: AgentComposerStepUsageResponse
+      description: 'Response containing daily usages of advance queries grouped by steps.
+
+
+        This API returns step-level breakdown of Agent Composer usage for visualization purposes. The costs in this response are already included in the ACL_COST entry from the daily_usages table and should not be double-counted.'
+    TopUpHistoryResponse:
+      properties:
+        amount:
+          type: number
+          title: Amount
+          description: Amount of the top-up
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Date when the top-up was created
+        description:
+          type: string
+          title: Description
+          description: Description of the top-up
+        starting_balance:
+          type: number
+          title: Starting Balance
+          description: Starting balance before the top-up
+        ending_balance:
+          type: number
+          title: Ending Balance
+          description: Ending balance after the top-up
+      type: object
+      required:
+      - amount
+      - created_at
+      - description
+      - starting_balance
+      - ending_balance
+      title: TopUpHistoryResponse
+      description: Individual top-up entry
+    AgentComposerStepUsage:
+      properties:
+        step_name:
+          type: string
+          title: Step Name
+          description: Name of the pipeline step
+        date:
+          type: string
+          title: Date
+          description: Date in ISO format (YYYY-MM-DD)
+        input_tokens:
+          type: integer
+          title: Input Tokens
+          description: Total input tokens for this step
+        output_tokens:
+          type: integer
+          title: Output Tokens
+          description: Total output tokens for this step
+        total_cost:
+          type: number
+          title: Total Cost
+          description: Total cost in USD for this step
+      type: object
+      required:
+      - step_name
+      - date
+      - input_tokens
+      - output_tokens
+      - total_cost
+      title: AgentComposerStepUsage
+      description: 'Single day''s Agent Composer usage for a specific step.
+
+
+        Represents aggregated usage data for a pipeline step on a specific date, summing across all models used by that step.'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    EarliestUsageDateResponse:
+      properties:
+        date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Date
+          description: Earliest usage date
+      type: object
+      required:
+      - date
+      title: EarliestUsageDateResponse
+      description: Response to GET /billing/usage/earliest_date request
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key

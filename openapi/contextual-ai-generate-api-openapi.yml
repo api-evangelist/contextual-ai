@@ -1,136 +1,169 @@
 openapi: 3.2.0
 info:
-  title: Contextual AI Platform Generate API
-  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
-  termsOfService: https://contextual.ai/terms-of-service/
-  contact:
-    name: Contextual AI Support
-    url: https://docs.contextual.ai
-    email: support@contextual.ai
+  title: Endpoints /generate API
   version: '1.0'
 servers:
 - url: https://api.contextual.ai/v1
-  description: Contextual AI production API
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
-- name: Generate
-  description: Grounded generation with the Grounded Language Model (GLM).
+- name: /generate
 paths:
   /generate:
     post:
-      operationId: generate
       tags:
-      - Generate
+      - /generate
       summary: Generate
-      description: Generate a response grounded in supplied knowledge using the Grounded Language Model (GLM). The total request is limited to 32,000 tokens.
+      description: 'Generate a response using Contextual''s Grounded Language Model (GLM), an LLM engineered specifically to prioritize faithfulness to in-context retrievals over parametric knowledge to reduce hallucinations in Retrieval-Augmented Generation and agentic use cases.
+
+
+        The total request cannot exceed 32,000 tokens.
+
+
+        See our blog post and code examples. Email glm-feedback@contextual.ai with any feedback or questions.'
+      operationId: generate_generate_post
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GenerateRequest'
+              $ref: '#/components/schemas/GenerateRequestV1'
+        required: true
       responses:
         '200':
-          description: Grounded generation result.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenerateResponse'
+                $ref: '#/components/schemas/GenerateResponseV1'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    GenerateResponse:
-      type: object
-      properties:
-        response:
-          type: string
-          description: The model's answer to the user's final message.
-    Message:
-      type: object
-      required:
-      - role
-      - content
-      properties:
-        role:
-          type: string
-          enum:
-          - user
-          - assistant
-        content:
-          type: string
-    ValidationErrorDetail:
-      type: object
+    ValidationError:
       properties:
         loc:
-          type: array
           items:
-            oneOf:
+            anyOf:
             - type: string
             - type: integer
+          type: array
+          title: Location
         msg:
           type: string
+          title: Message
         type:
           type: string
-    GenerateRequest:
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    GenerateRequestV1:
+      properties:
+        model:
+          type: string
+          title: Model
+          description: The version of the Contextual's GLM to use. Currently, we have `v1` and `v2`.
+        messages:
+          items:
+            $ref: '#/components/schemas/MessageAndRoleGenerateAPI'
+          type: array
+          minItems: 1
+          title: Messages
+          description: List of messages in the conversation so far. The last message must be from the user.
+        knowledge:
+          items:
+            type: string
+          type: array
+          title: Knowledge
+          description: The knowledge sources the model can use when generating a response.
+        system_prompt:
+          type: string
+          title: System Prompt
+          description: Instructions that the model follows when generating responses. Note that we do not guarantee that the model follows these instructions exactly.
+        avoid_commentary:
+          type: boolean
+          title: Avoid Commentary
+          description: Flag to indicate whether the model should avoid providing additional commentary in responses. Commentary is conversational in nature and does not contain verifiable claims; therefore, commentary is not strictly grounded in available context. However, commentary may provide useful context which improves the helpfulness of responses.
+          default: false
+        temperature:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: Temperature
+          description: The sampling temperature, which affects the randomness in the response. Note that higher temperature values can reduce groundedness.
+          default: 0
+        top_p:
+          type: number
+          maximum: 1
+          exclusiveMinimum: 0
+          title: Top_p
+          description: A parameter for nucleus sampling, an alternative to temperature which also affects the randomness of the response. Note that higher top_p values can reduce groundedness.
+          default: 0.9
+        max_new_tokens:
+          type: integer
+          maximum: 2048
+          minimum: 1
+          title: Max New Tokens
+          description: The maximum number of tokens that the model can generate in the response.
+          default: 1024
+      additionalProperties: false
       type: object
       required:
       - model
       - messages
       - knowledge
+      title: GenerateRequestV1
+      description: /generate input request object.
+    SenderTypeGenerateAPI:
+      type: string
+      enum:
+      - user
+      - assistant
+      title: SenderTypeGenerateAPI
+    GenerateResponseV1:
       properties:
-        model:
+        response:
           type: string
-          enum:
-          - v1
-          - v2
-          description: Grounded Language Model (GLM) version.
-        messages:
-          type: array
+          title: Response
+          description: The model's response to the last user message.
+      type: object
+      required:
+      - response
+      title: GenerateResponseV1
+      description: /generate result object.
+    HTTPValidationError:
+      properties:
+        detail:
           items:
-            $ref: '#/components/schemas/Message'
-          description: Conversation messages; the last must be from the user.
-        knowledge:
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          items:
-            type: string
-          description: Knowledge sources to ground the response in.
-        system_prompt:
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MessageAndRoleGenerateAPI:
+      properties:
+        content:
           type: string
-        avoid_commentary:
-          type: boolean
-          default: false
-          description: Suppress non-grounded conversational text.
-        temperature:
-          type: number
-          minimum: 0
-          maximum: 1
-          default: 0
-        top_p:
-          type: number
-          default: 0.9
-        max_new_tokens:
-          type: integer
-          minimum: 1
-          maximum: 2048
-          default: 1024
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
+          title: Content
+          description: Content of the message
+        role:
+          $ref: '#/components/schemas/SenderTypeGenerateAPI'
+          description: Role of the sender
+      type: object
+      required:
+      - content
+      - role
+      title: MessageAndRoleGenerateAPI
+      description: Message object for a message received in the /generate request
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
-      description: Contextual AI API key supplied as a Bearer token.
+      bearerFormat: API Key

@@ -1,0 +1,378 @@
+openapi: 3.2.0
+info:
+  title: Endpoints /contents API
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+security:
+- BearerAuth: []
+tags:
+- name: /contents
+paths:
+  /datastores/{datastore_id}/contents:
+    get:
+      tags:
+      - /contents
+      summary: Get Document Contents
+      operationId: get_document_contents_datastores__datastore_id__contents_get
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Datastore ID of the datastore from which to retrieve the document
+          title: Datastore Id
+        description: Datastore ID of the datastore from which to retrieve the document
+      - name: document_id
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+          description: Document ID of the document to retrieve details for
+          title: Document Id
+        description: Document ID of the document to retrieve details for
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+          description: The query to search keywords for
+          title: Search
+        description: The query to search keywords for
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The offset to start retrieving content ids
+          default: 0
+          title: Offset
+        description: The offset to start retrieving content ids
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The number of content ids to be returned
+          default: 50
+          title: Limit
+        description: The number of content ids to be returned
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListContentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datastores/{datastore_id}/contents/{content_id}/metadata:
+    get:
+      tags:
+      - /contents
+      summary: Get Content Metadata
+      operationId: get_content_metadata_datastores__datastore_id__contents__content_id__metadata_get
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Datastore Id
+      - name: content_id
+        in: path
+        required: true
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: string
+          title: Content Id
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Cursor
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/UnstructuredContentMetadata'
+                - $ref: '#/components/schemas/StructuredContentMetadata'
+                - $ref: '#/components/schemas/FileAnalysisContentMetadata'
+                - $ref: '#/components/schemas/ContextualAgentContentMetadata'
+                discriminator:
+                  propertyName: content_type
+                  mapping:
+                    unstructured: '#/components/schemas/UnstructuredContentMetadata'
+                    structured: '#/components/schemas/StructuredContentMetadata'
+                    file_analysis: '#/components/schemas/FileAnalysisContentMetadata'
+                    contextual_agent_response: '#/components/schemas/ContextualAgentContentMetadata'
+                description: Content type
+                title: Response Get Content Metadata Datastores  Datastore Id  Contents  Content Id  Metadata Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    DocumentContentEntry:
+      properties:
+        content_id:
+          type: string
+          format: uuid
+          title: Content Id
+          description: ID of the content
+        content_type:
+          type: string
+          const: unstructured
+          title: Content Type
+          default: unstructured
+        page_number:
+          type: integer
+          title: Page Number
+          description: Page number of the content
+      type: object
+      required:
+      - content_id
+      - page_number
+      title: DocumentContentEntry
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ContextualAgentContentMetadata:
+      properties:
+        content_id:
+          type: string
+          format: uuid
+          title: Content Id
+          description: Id of the content.
+        content_type:
+          type: string
+          const: contextual_agent_response
+          title: Content Type
+          default: contextual_agent_response
+        agent_id:
+          type: string
+          title: Agent Id
+          description: Id of the agent that generated the response.
+        content_text:
+          type: string
+          title: Content Text
+          description: The text content of the agent response.
+      type: object
+      required:
+      - content_id
+      - agent_id
+      - content_text
+      title: ContextualAgentContentMetadata
+    ListContentResponse:
+      properties:
+        data:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/DocumentContentEntry'
+            - $ref: '#/components/schemas/StructuredContentEntry'
+            description: Content entry type
+            discriminator:
+              propertyName: content_type
+              mapping:
+                structured: '#/components/schemas/StructuredContentEntry'
+                unstructured: '#/components/schemas/DocumentContentEntry'
+          type: array
+          title: Data
+          description: List of content entries
+        has_more:
+          type: boolean
+          title: Has More
+          description: Whether there are more content entries to retrieve
+      type: object
+      required:
+      - data
+      - has_more
+      title: ListContentResponse
+    StructuredContentEntry:
+      properties:
+        content_id:
+          type: string
+          title: Content Id
+          description: ID of the content
+        content_type:
+          type: string
+          const: structured
+          title: Content Type
+          default: structured
+        table_name:
+          type: string
+          title: Table Name
+          description: Name of the table
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schema
+          description: Name of the schema of the table
+      type: object
+      required:
+      - content_id
+      - table_name
+      title: StructuredContentEntry
+      description: Tabular content entry used in query retrieval.
+    StructuredContentMetadata:
+      properties:
+        content_id:
+          type: string
+          title: Content Id
+          description: Id of the content.
+        content_type:
+          type: string
+          const: structured
+          title: Content Type
+          default: structured
+        content_text:
+          title: Content Text
+          description: Text of the content.
+      type: object
+      required:
+      - content_id
+      - content_text
+      title: StructuredContentMetadata
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UnstructuredContentMetadata:
+      properties:
+        x0:
+          type: number
+          title: X0
+          description: X coordinate of the top left corner on the bounding box.
+        y0:
+          type: number
+          title: Y0
+          description: Y coordinate of the top left corner on the bounding box.
+        x1:
+          type: number
+          title: X1
+          description: X coordinate of the bottom right corner on the bounding box.
+        y1:
+          type: number
+          title: Y1
+          description: Y coordinate of the bottom right corner on the bounding box.
+        page:
+          type: integer
+          title: Page
+          description: Page number of the content.
+        page_img:
+          type: string
+          title: Page Img
+          description: Image of the page on which the content occurs.
+        width:
+          type: number
+          title: Width
+          description: Width of the image.
+        height:
+          type: number
+          title: Height
+          description: Height of the image.
+        content_id:
+          type: string
+          format: uuid
+          title: Content Id
+          description: Id of the content.
+        document_id:
+          type: string
+          format: uuid
+          title: Document Id
+          description: Id of the document which the content belongs to.
+        content_type:
+          type: string
+          const: unstructured
+          title: Content Type
+          default: unstructured
+        content_text:
+          type: string
+          title: Content Text
+          description: Text of the content.
+      type: object
+      required:
+      - x0
+      - y0
+      - x1
+      - y1
+      - page
+      - page_img
+      - width
+      - height
+      - content_id
+      - document_id
+      - content_text
+      title: UnstructuredContentMetadata
+    FileAnalysisContentMetadata:
+      properties:
+        gcp_location:
+          type: string
+          title: Gcp Location
+          description: GCP location of the file.
+        file_format:
+          type: string
+          title: File Format
+          description: Format of the file.
+        content_id:
+          type: string
+          format: uuid
+          title: Content Id
+          description: Id of the content.
+        content_type:
+          type: string
+          const: file_analysis
+          title: Content Type
+          default: file_analysis
+      type: object
+      required:
+      - gcp_location
+      - file_format
+      - content_id
+      title: FileAnalysisContentMetadata
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key

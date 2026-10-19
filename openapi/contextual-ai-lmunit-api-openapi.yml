@@ -1,99 +1,113 @@
 openapi: 3.2.0
 info:
-  title: Contextual AI Platform LM Unit API
-  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
-  termsOfService: https://contextual.ai/terms-of-service/
-  contact:
-    name: Contextual AI Support
-    url: https://docs.contextual.ai
-    email: support@contextual.ai
+  title: Endpoints /lmunit API
   version: '1.0'
 servers:
 - url: https://api.contextual.ai/v1
-  description: Contextual AI production API
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
-- name: LMUnit
-  description: Evaluate model responses with natural-language unit tests.
+- name: /lmunit
 paths:
   /lmunit:
     post:
-      operationId: lmunit
       tags:
-      - LMUnit
+      - /lmunit
       summary: LMUnit
-      description: Evaluate a model response against a natural-language unit test. Total input is limited to 7000 tokens. Returns a score from 1 (strongly fails) to 5 (strongly passes).
+      description: 'Given a `query`, `response`, and a `unit_test`, return the response''s `score` on the unit test on a 5-point continuous scale. The total input cannot exceed 7000 tokens.
+
+
+        See a code example in our blog post. Email lmunit-feedback@contextual.ai with any feedback or questions.
+
+
+        >🚀 Obtain an LMUnit API key by completing this form'
+      operationId: lmunit_lmunit_post
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LMUnitRequest'
+              $ref: '#/components/schemas/LMUnitRequestV1'
+        required: true
       responses:
         '200':
-          description: Evaluation score.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LMUnitResponse'
+                $ref: '#/components/schemas/LMUnitResponseV1'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    LMUnitRequest:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    LMUnitResponseV1:
+      properties:
+        score:
+          type: number
+          title: Score
+          description: The response is scored on a continuous scale from 1 to 5 on the unit test. The discrete scores 1, 2, 3, 4, and 5 roughly correspond to "Strongly fails," "Fails," "Neutral," "Passes," and "Strongly passes," respectively.
+      type: object
+      required:
+      - score
+      title: LMUnitResponseV1
+      description: LMUnit result object.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    LMUnitRequestV1:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: The prompt to which the model responds
+        response:
+          type: string
+          title: Response
+          description: The model response to evaluate
+        unit_test:
+          type: string
+          title: Unit Test
+          description: A natural language statement or question against which to evaluate the response
+      additionalProperties: false
       type: object
       required:
       - query
       - response
       - unit_test
-      properties:
-        query:
-          type: string
-          description: The prompt to which the model responds.
-        response:
-          type: string
-          description: The model response to evaluate.
-        unit_test:
-          type: string
-          description: Natural-language statement to evaluate the response against.
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    LMUnitResponse:
-      type: object
-      properties:
-        score:
-          type: number
-          minimum: 1
-          maximum: 5
-          description: Continuous score from 1 (strongly fails) to 5 (strongly passes).
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
+      title: LMUnitRequestV1
+      description: LMUnit input request object.
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
-      description: Contextual AI API key supplied as a Bearer token.
+      bearerFormat: API Key

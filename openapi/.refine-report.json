@@ -1,36 +1,43 @@
 {
   "provider": "contextual-ai",
   "sources": [
-    "_original/contextual-ai-openapi.yml"
+    "_original/contextual-ai-openapi.json"
   ],
   "outputs": [
     "contextual-ai-agents-api-openapi.yml",
-    "contextual-ai-agents-query-api-openapi.yml",
+    "contextual-ai-agents-id-query-api-openapi.yml",
+    "contextual-ai-billing-api-openapi.yml",
+    "contextual-ai-contents-api-openapi.yml",
     "contextual-ai-datastores-api-openapi.yml",
-    "contextual-ai-documents-api-openapi.yml",
+    "contextual-ai-datastores-id-documents-api-openapi.yml",
+    "contextual-ai-extract-api-openapi.yml",
     "contextual-ai-generate-api-openapi.yml",
     "contextual-ai-lmunit-api-openapi.yml",
     "contextual-ai-parse-api-openapi.yml",
     "contextual-ai-rerank-api-openapi.yml",
-    "contextual-ai-users-api-openapi.yml"
+    "contextual-ai-users-api-openapi.yml",
+    "contextual-ai-workspaces-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "contextual-ai-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "contextual-ai-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "contextual-ai-openapi.json: declared missing tag: /agents",
+    "contextual-ai-openapi.json: declared missing tag: /agents/{id}/query",
+    "contextual-ai-openapi.json: declared missing tag: /billing",
+    "contextual-ai-openapi.json: declared missing tag: /contents",
+    "contextual-ai-openapi.json: declared missing tag: /datastores",
+    "contextual-ai-openapi.json: declared missing tag: /datastores/{id}/documents",
+    "contextual-ai-openapi.json: declared missing tag: /extract",
+    "contextual-ai-openapi.json: declared missing tag: /generate",
+    "contextual-ai-openapi.json: declared missing tag: /lmunit",
+    "contextual-ai-openapi.json: declared missing tag: /parse",
+    "contextual-ai-openapi.json: declared missing tag: /rerank",
+    "contextual-ai-openapi.json: declared missing tag: /users",
+    "contextual-ai-openapi.json: declared missing tag: /workspaces",
+    "apis.yml register: written (+6 apis, 13 total)"
   ],
-  "skipped": [
-    "contextual-ai-agents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "contextual-ai-agents-query-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "contextual-ai-datastores-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "contextual-ai-documents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "contextual-ai-generate-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "contextual-ai-lmunit-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "contextual-ai-parse-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "contextual-ai-rerank-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "contextual-ai-users-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

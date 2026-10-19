@@ -1,137 +1,262 @@
 openapi: 3.2.0
 info:
-  title: Contextual AI Platform Parse API
-  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
-  termsOfService: https://contextual.ai/terms-of-service/
-  contact:
-    name: Contextual AI Support
-    url: https://docs.contextual.ai
-    email: support@contextual.ai
+  title: Endpoints /parse API
   version: '1.0'
 servers:
 - url: https://api.contextual.ai/v1
-  description: Contextual AI production API
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
-- name: Parse
-  description: Parse documents into structured, AI-ready markdown.
+- name: /parse
 paths:
   /parse:
     post:
-      operationId: parseFile
       tags:
-      - Parse
+      - /parse
       summary: Parse File
-      description: Submit a document (PDF, DOC(X), PPT(X), PNG, JPG/JPEG; max 300 MB, 2000 pages) to be parsed into AI-ready markdown. Returns a job_id; poll the status and results endpoints. Results are retained 30 days.
+      description: 'Parse a file into a structured Markdown and/or JSON. Files must be less than 300MB and 2000 pages. We use LibreOffice to convert DOC(X) and PPT(X) files to PDF, which may affect page count.
+
+
+        See our blog post and code examples. Email parse-feedback@contextual.ai with any feedback or questions.'
+      operationId: parse_parse_post
       requestBody:
-        required: true
         content:
           multipart/form-data:
             schema:
-              type: object
-              required:
-              - raw_file
-              properties:
-                raw_file:
-                  type: string
-                  format: binary
-                  description: File to parse.
-                parse_mode:
-                  type: string
-                  enum:
-                  - basic
-                  - standard
-                  default: standard
-                  description: basic (text-only) or standard (multimodal).
-                enable_document_hierarchy:
-                  type: boolean
-                  description: Add an inferred table of contents (beta).
-                enable_split_tables:
-                  type: boolean
-                  description: Split large tables by row, repeating headers.
-                max_split_table_cells:
-                  type: integer
-                  minimum: 1
-                  description: Cell-count threshold above which tables are split.
-                page_range:
-                  type: string
-                  description: 0-based pages to parse, e.g. "0,1,2" or "0-2,5".
+              $ref: '#/components/schemas/Body_parse_parse_post'
+        required: true
       responses:
         '200':
-          description: Parse job accepted.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ParseJobResponse'
+                $ref: '#/components/schemas/ParseResponseV1'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /parse/jobs/{job_id}/status:
     get:
-      operationId: parseStatus
       tags:
-      - Parse
+      - /parse
       summary: Parse Status
+      description: 'Get the status of a parse job.
+
+
+        Parse job results are retained for up to 30 days after job creation. Fetching a status for a parse job that is older than 30 days will return a 404 error.'
+      operationId: parse_status_parse_jobs__job_id__status_get
       parameters:
-      - $ref: '#/components/parameters/JobId'
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Unique ID of the parse job
+          title: Job Id
+        description: Unique ID of the parse job
       responses:
         '200':
-          description: Parse job status.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ParseStatusResponse'
-        '404':
-          description: Job not found or older than 30 days.
+                $ref: '#/components/schemas/ParseStatusResponseV1'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /parse/jobs/{job_id}/results:
     get:
-      operationId: parseResult
       tags:
-      - Parse
+      - /parse
       summary: Parse Result
+      description: 'Get the results of a parse job.
+
+
+        Parse job results are retained for up to 30 days after job creation. Fetching results for a parse job that is older than 30 days will return a 404 error.'
+      operationId: parse_results_parse_jobs__job_id__results_get
       parameters:
-      - $ref: '#/components/parameters/JobId'
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Unique ID of the parse job
+          title: Job Id
+        description: Unique ID of the parse job
       - name: output_types
         in: query
         required: false
-        style: form
-        explode: true
         schema:
           type: array
           items:
-            type: string
-            enum:
-            - markdown-document
-            - markdown-per-page
-            - blocks-per-page
+            $ref: '#/components/schemas/ParseOutputFormat'
+          description: "The desired output format(s) of the parsed file. Must be `markdown-document`, `markdown-per-page`, and/or `blocks-per-page`. Specify multiple values to get multiple formats in the response. `markdown-document` parses the whole document into a single concatenated markdown output. `markdown-per-page` provides markdown output per page. `blocks-per-page` provides a structured JSON representation of the content blocks on each page, sorted by reading order.\n            "
+          default:
+          - markdown-per-page
+          title: Output Types
+        description: "The desired output format(s) of the parsed file. Must be `markdown-document`, `markdown-per-page`, and/or `blocks-per-page`. Specify multiple values to get multiple formats in the response. `markdown-document` parses the whole document into a single concatenated markdown output. `markdown-per-page` provides markdown output per page. `blocks-per-page` provides a structured JSON representation of the content blocks on each page, sorted by reading order.\n            "
       responses:
         '200':
-          description: Parse results.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ParseResultResponse'
-        '404':
-          description: Results not found or older than 30 days.
+                $ref: '#/components/schemas/ParseResultsResponseV1'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /parse/jobs:
     get:
-      operationId: parseListJobs
       tags:
-      - Parse
+      - /parse
       summary: Parse List Jobs
-      description: List parse jobs in the workspace.
+      description: 'Get list of parse jobs, sorted from most recent to oldest.
+
+
+        Returns all jobs from the last 30 days, or since the optional `uploaded_after` timestamp.'
+      operationId: parse_list_jobs_parse_jobs_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 1000
+          minimum: 1
+          description: Maximum number of parse jobs to return
+          default: 1000
+          title: Limit
+        description: Maximum number of parse jobs to return
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Cursor from the previous call to list parse jobs, used to retrieve the next set of results
+          title: Cursor
+        description: Cursor from the previous call to list parse jobs, used to retrieve the next set of results
+      - name: uploaded_after
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+          description: Filters to only documents uploaded to `/parse` at or after specified UTC timestamp. If not provided, or if the provided timestamp is before the maximum parse job retention period (30 days), the maximum retention period will be used instead.
+          examples:
+          - '2026-05-10T00:00:00'
+          title: Uploaded After
+        description: Filters to only documents uploaded to `/parse` at or after specified UTC timestamp. If not provided, or if the provided timestamp is before the maximum parse job retention period (30 days), the maximum retention period will be used instead.
       responses:
         '200':
-          description: A list of parse jobs.
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseListJobsResponseV1'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ParseJobStatus:
+    ParsedBlockConfidenceLevel:
+      type: string
+      enum:
+      - low
+      - medium
+      - high
+      title: ParsedBlockConfidenceLevel
+      description: The confidence level of a parsed block.
+    ParsedPage:
+      properties:
+        index:
+          type: integer
+          title: Page Index
+          description: The index of the parsed page (zero-indexed)
+          examples:
+          - 0
+        markdown:
+          type: string
+          title: Markdown
+          description: The parsed, structured Markdown of this page. Present if `markdown-per-page` was among the requested output types.
+        blocks:
+          items:
+            $ref: '#/components/schemas/ParsedBlock'
+          type: array
+          title: Blocks
+          description: The parsed, structured blocks of this page. Present if `blocks-per-page` was among the requested output types.
+      type: object
+      required:
+      - index
+      title: ParsedPage
+      description: Per-page parse results.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ParseResultsResponseV1:
+      properties:
+        file_name:
+          type: string
+          title: File Name
+          description: The name of the file that was uploaded for parsing
+        status:
+          $ref: '#/components/schemas/DocumentStatusEnum'
+          title: Job Status
+          description: The current status of the parse job
+          examples:
+          - completed
+        pages:
+          items:
+            $ref: '#/components/schemas/ParsedPage'
+          type: array
+          title: Parsed Pages
+          description: Per-page parse results, containing per-page Markdown (if `markdown-per-page` was requested) and/or per-page `ParsedBlock`s (if `blocks-per-page` was requested).
+        markdown_document:
+          type: string
+          title: Parsed Markdown File
+          description: The parsed, structured Markdown of the input file. Only present if `markdown-document` was among the requested output types.
+        document_metadata:
+          $ref: '#/components/schemas/DocumentMetadata'
+          title: Document Metadata
+          description: Document-level metadata parsed from the document
+      type: object
+      required:
+      - file_name
+      - status
+      title: ParseResultsResponseV1
+      description: /parse results reponse object.
+    DocumentStatusEnum:
       type: string
       enum:
       - pending
@@ -140,72 +265,267 @@ components:
       - completed
       - failed
       - cancelled
-    ParseResultResponse:
-      type: object
+      title: DocumentStatusEnum
+    ParseListJobsResponseV1:
       properties:
-        file_name:
+        total_jobs:
+          type: integer
+          title: Total Jobs
+          description: Total number of parse jobs
+          examples:
+          - 10
+        next_cursor:
           type: string
-        status:
-          $ref: '#/components/schemas/ParseJobStatus'
-        markdown_document:
-          type: string
-        pages:
-          type: array
+          title: Next Cursor
+          description: Next cursor to continue pagination.             Omitted if there are no more parse jobs after these ones.
+        jobs:
           items:
-            type: object
-        document_metadata:
-          type: object
-    ParseStatusResponse:
+            $ref: '#/components/schemas/ParseListJobsItem'
+          type: array
+          title: Jobs
+          description: List of parse jobs
       type: object
+      required:
+      - total_jobs
+      - jobs
+      title: ParseListJobsResponseV1
+      description: /parse list jobs object.
+    ParsedBlockType:
+      type: string
+      enum:
+      - heading
+      - text
+      - table
+      - figure
+      title: ParsedBlockType
+      description: The type of a parsed block.
+    ParseMode:
+      type: string
+      enum:
+      - basic
+      - standard
+      title: ParseMode
+    ParseListJobsItem:
       properties:
+        id:
+          type: string
+          format: uuid
+          title: Job ID
+          description: Unique ID of the parse job
         status:
-          $ref: '#/components/schemas/ParseJobStatus'
+          $ref: '#/components/schemas/DocumentStatusEnum'
+          title: Job Status
+          description: The current status of the parse job
+          examples:
+          - completed
         file_name:
           type: string
-    ParseJobResponse:
+          title: File Name
+          description: The name of the file that was uploaded for parsing
       type: object
+      required:
+      - id
+      - status
+      - file_name
+      title: ParseListJobsItem
+    DocumentMetadata:
+      properties:
+        hierarchy:
+          $ref: '#/components/schemas/DocumentHierarchy'
+          title: Hierarchy
+          description: Hierarchy of the document, as both heading blocks and a markdown table of contents
+      type: object
+      title: DocumentMetadata
+      description: Metadata about the document that was parsed.
+    ParseStatusResponseV1:
+      properties:
+        status:
+          $ref: '#/components/schemas/DocumentStatusEnum'
+          title: Job Status
+          description: The current status of the parse job
+          examples:
+          - completed
+        file_name:
+          type: string
+          title: File Name
+          description: The name of the file that was uploaded for parsing
+      type: object
+      required:
+      - status
+      - file_name
+      title: ParseStatusResponseV1
+      description: /parse status reponse object.
+    ParsedBlock:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Block ID
+          description: Unique ID of the block
+        type:
+          $ref: '#/components/schemas/ParsedBlockType'
+          title: Block Type
+          description: The type of the block
+        bounding_box:
+          $ref: '#/components/schemas/BlockBoundingBox'
+          title: Bounding Box
+          description: The normalized bounding box of the block, as relative percentages of the page width and height
+        markdown:
+          type: string
+          title: Block Markdown
+          description: The Markdown representation of the block
+        confidence_level:
+          $ref: '#/components/schemas/ParsedBlockConfidenceLevel'
+          title: Table Confidence Level
+          description: The confidence level of this block categorized as 'low', 'medium', or 'high'. Only available for blocks of type 'table' currently.
+          examples:
+          - high
+        page_index:
+          type: integer
+          title: Page Index
+          description: The page (0-indexed) that this block belongs to. Only set for heading blocks that are returned in the table of contents.
+        parent_ids:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Parent Block IDs
+          description: The IDs of the parent in the document hierarchy, sorted from root-level to bottom. For root-level heading blocks, this will be an empty list. Only present if `enable_document_hierarchy` was set to true in the request.
+        hierarchy_level:
+          type: integer
+          title: Block Hierarchy Level
+          description: The level of the block in the document hierarchy, starting at 0 for the root-level title block. Only present if `enable_document_hierarchy` was set to true in the request.
+      type: object
+      required:
+      - id
+      - type
+      - bounding_box
+      - markdown
+      title: ParsedBlock
+      description: One logical block of content from a parsed page.
+    ParseResponseV1:
       properties:
         job_id:
           type: string
           format: uuid
-    HTTPValidationError:
+          title: Job ID
+          description: Unique ID of the parse job
       type: object
+      required:
+      - job_id
+      title: ParseResponseV1
+      description: /parse response object.
+    HTTPValidationError:
       properties:
         detail:
-          type: array
           items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    ValidationErrorDetail:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
+      title: HTTPValidationError
+    BlockBoundingBox:
       properties:
-        loc:
-          type: array
+        x0:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: X0
+          description: The x-coordinate of the top-left corner of the bounding box
+        y0:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: Y0
+          description: The y-coordinate of the top-left corner of the bounding box
+        x1:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: X1
+          description: The x-coordinate of the bottom-right corner of the bounding box
+        y1:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: Y1
+          description: The y-coordinate of the bottom-right corner of the bounding box
+      type: object
+      required:
+      - x0
+      - y0
+      - x1
+      - y1
+      title: BlockBoundingBox
+      description: Normalized bounding box of a block, as relative percentages of the page width and height.
+    DocumentHierarchy:
+      properties:
+        blocks:
           items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
+            $ref: '#/components/schemas/ParsedBlock'
+          type: array
+          title: Heading Blocks
+          description: Heading blocks which define the hierarchy of the document
+        table_of_contents:
           type: string
-        type:
+          title: Markdown Table of Contents
+          description: Markdown representation of the table of contents for this document
+      additionalProperties: false
+      type: object
+      title: DocumentHierarchy
+      description: Document hierarchy within the parsed document
+    Body_parse_parse_post:
+      properties:
+        raw_file:
           type: string
-  parameters:
-    JobId:
-      name: job_id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: ID of the parse job.
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
+          format: binary
+          title: Raw File
+          description: The file to be parsed. The file type must be PDF, DOC / DOCX, PPT / PPTX, PNG, JPG / JPEG.
+        parse_mode:
+          $ref: '#/components/schemas/ParseMode'
+          description: The settings to use for parsing. `basic` is for simple, text-only documents. `standard` is for complex documents with images, complex hierarchy, and/or no natively encoded textual data (e.g. for scanned documents).
+          default: standard
+          examples:
+          - standard
+        enable_document_hierarchy:
+          type: boolean
+          title: Enable Document Hierarchy
+          description: Adds a table of contents to the output with the structure of the entire parsed document. This feature is in beta. Controls parsing heading levels (e.g. H1, H2, H3) at higher quality. Not permitted in `basic` parsing_mode, or if page_range is not continuous and/or does not start from page zero.
+          examples:
+          - true
+        enable_split_tables:
+          type: boolean
+          title: Enable Split Tables
+          description: Controls whether tables are split into multiple tables by row with the headers propagated. Use for improving LLM comprehension of very large tables. Not permitted in `basic` parsing_mode.
+          examples:
+          - false
+        max_split_table_cells:
+          type: integer
+          title: Max Split Table Cells
+          description: Threshold number of table cells beyond which large tables are split if `enable_split_tables` is True. Must be null if `enable_split_tables` is False.
+          examples:
+          - null
+          gt: 0
+        page_range:
+          type: string
+          title: Page Range
+          description: 'Optional string representing page range to be parsed. Format: comma-separated indexes (0-based, e.g. `0,1,2,5,6`), or ranges inclusive of both ends (e.g. `0-2,5,6`)'
+          examples:
+          - null
+      type: object
+      required:
+      - raw_file
+      title: Body_parse_parse_post
+    ParseOutputFormat:
+      type: string
+      enum:
+      - markdown-document
+      - markdown-per-page
+      - blocks-per-page
+      title: ParseOutputFormat
+      description: The format of the output to be returned by the /parse endpoint.
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
-      description: Contextual AI API key supplied as a Bearer token.
+      bearerFormat: API Key

@@ -1,120 +1,320 @@
 openapi: 3.2.0
 info:
-  title: Contextual AI Platform Users API
-  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
-  termsOfService: https://contextual.ai/terms-of-service/
-  contact:
-    name: Contextual AI Support
-    url: https://docs.contextual.ai
-    email: support@contextual.ai
+  title: Endpoints /users API
   version: '1.0'
 servers:
 - url: https://api.contextual.ai/v1
-  description: Contextual AI production API
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
-- name: Users
-  description: Manage workspace users.
+- name: /users
 paths:
   /users:
     get:
-      operationId: getUsers
       tags:
-      - Users
+      - /users
       summary: Get Users
-      responses:
-        '200':
-          description: A list of workspace users.
-        '422':
-          $ref: '#/components/responses/ValidationError'
-    patch:
-      operationId: updateUser
-      tags:
-      - Users
-      summary: Update User
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        '200':
-          description: User updated.
-        '422':
-          $ref: '#/components/responses/ValidationError'
-    delete:
-      operationId: removeUser
-      tags:
-      - Users
-      summary: Remove User
+      description: Retrieve a list of `users`.
+      operationId: get_users_users_get
       parameters:
-      - name: email
+      - name: search
         in: query
-        required: true
+        required: false
         schema:
           type: string
-          format: email
+          description: Query to filter users by email
+          title: Search
+        description: Query to filter users by email
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Cursor for the beginning of the current page
+          title: Cursor
+        description: Cursor for the beginning of the current page
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of users to return
+          default: 50
+          title: Limit
+        description: Number of users to return
+      - name: deactivated
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: When set to true, return deactivated users instead.
+          default: false
+          title: Deactivated
+        description: When set to true, return deactivated users instead.
       responses:
         '200':
-          description: User removed.
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListResponse'
         '422':
-          $ref: '#/components/responses/ValidationError'
-  /users/invite:
-    post:
-      operationId: inviteUsers
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
       tags:
-      - Users
-      summary: Invite Users
+      - /users
+      summary: Update User
+      description: 'Modify a given `User`.
+
+
+        Fields not included in the request body will not be modified.'
+      operationId: update_user_users_put
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                emails:
-                  type: array
-                  items:
-                    type: string
-                    format: email
+              $ref: '#/components/schemas/TenantNewUserInfo'
       responses:
         '200':
-          description: Users invited.
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - /users
+      summary: Remove User
+      description: Delete a given `user`.
+      operationId: remove_user_users_delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantRemoveUser'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - /users
+      summary: Invite Users
+      description: Invite users to the tenant. This checks if the user is already in the tenant and if not, creates the user. We will return a list of user emails that were successfully created (including existing users).
+      operationId: invite_users_users_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteUsersRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteUsersResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
   schemas:
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    ValidationErrorDetail:
-      type: object
+    ValidationError:
       properties:
         loc:
-          type: array
           items:
-            oneOf:
+            anyOf:
             - type: string
             - type: integer
+          type: array
+          title: Location
         msg:
           type: string
+          title: Message
         type:
           type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    InviteUsersResponse:
+      properties:
+        invited_user_emails:
+          items:
+            type: string
+          type: array
+          title: Invited User Emails
+          description: List of emails of the invited users
+        error_details:
+          additionalProperties:
+            type: string
+          type: object
+          title: Error Details
+          description: Details of the errors occurred while inviting users, where keys are the emails and values are the error messages
+      type: object
+      required:
+      - invited_user_emails
+      - error_details
+      title: InviteUsersResponse
+    TenantRemoveUser:
+      properties:
+        email:
+          type: string
+          title: Email
+          description: The email of the user
+      type: object
+      required:
+      - email
+      title: TenantRemoveUser
+      description: The schema used for removing a user
+    InviteUsersRequest:
+      properties:
+        tenant_short_name:
+          type: string
+          title: Tenant Short Name
+          description: The short name of the tenant
+        new_users:
+          items:
+            $ref: '#/components/schemas/TenantNewUserInfo'
+          type: array
+          title: New Users
+          description: List of new users to be invited
+      type: object
+      required:
+      - tenant_short_name
+      - new_users
+      title: InviteUsersRequest
+    EmptyResponse:
+      properties: {}
+      type: object
+      title: EmptyResponse
+    TenantUserInfo:
+      properties:
+        email:
+          type: string
+          title: Email
+          description: The email of the user
+        is_tenant_admin:
+          type: boolean
+          title: Is Tenant Admin
+          description: Flag indicating if the user is a tenant admin
+          default: false
+        roles:
+          items:
+            $ref: '#/components/schemas/UserRolesEnum'
+          type: array
+          title: Roles
+          description: The user level roles of the user.
+        id:
+          type: string
+          title: Id
+        effective_roles:
+          items:
+            $ref: '#/components/schemas/UserRolesEnum'
+          type: array
+          title: Effective Roles
+          description: The effective roles of the user.
+      type: object
+      required:
+      - email
+      - id
+      title: TenantUserInfo
+      description: The schema used for listing existing (activated / deactivated) users.
+    TenantNewUserInfo:
+      properties:
+        email:
+          type: string
+          title: Email
+          description: The email of the user
+        is_tenant_admin:
+          type: boolean
+          title: Is Tenant Admin
+          description: Flag indicating if the user is a tenant admin
+          default: false
+        roles:
+          items:
+            $ref: '#/components/schemas/UserRolesEnum'
+          type: array
+          title: Roles
+          description: The user level roles of the user.
+      type: object
+      required:
+      - email
+      title: TenantNewUserInfo
+      description: The schema used for creating new users or updating existing users.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UserRolesEnum:
+      type: string
+      enum:
+      - VISITOR
+      - AGENT_USER
+      - CUSTOMER_USER
+      - CUSTOMER_INTERNAL_USER
+      - CONTEXTUAL_STAFF_USER
+      - CONTEXTUAL_EXTERNAL_STAFF_USER
+      - CONTEXTUAL_INTERNAL_STAFF_USER
+      - TENANT_ADMIN
+      - CUSTOMER_ADMIN
+      - CONTEXTUAL_ADMIN
+      - SUPER_ADMIN
+      - SERVICE_ACCOUNT
+      title: UserRolesEnum
+    UsersListResponse:
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/TenantUserInfo'
+          type: array
+          title: Users
+          description: List of users
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Cursor
+          description: Cursor for the beginning of the next page
+      type: object
+      required:
+      - users
+      title: UsersListResponse
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
-      description: Contextual AI API key supplied as a Bearer token.
+      bearerFormat: API Key

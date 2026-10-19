@@ -1,177 +1,547 @@
 openapi: 3.2.0
 info:
-  title: Contextual AI Platform Datastores API
-  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
-  termsOfService: https://contextual.ai/terms-of-service/
-  contact:
-    name: Contextual AI Support
-    url: https://docs.contextual.ai
-    email: support@contextual.ai
+  title: Endpoints /datastores API
   version: '1.0'
 servers:
 - url: https://api.contextual.ai/v1
-  description: Contextual AI production API
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
-- name: Datastores
-  description: Create and manage datastores that hold ingested knowledge.
+- name: /datastores
 paths:
   /datastores:
     post:
-      operationId: createDatastore
       tags:
-      - Datastores
+      - /datastores
       summary: Create Datastore
+      description: 'Create a new `Datastore`.
+
+
+        A `Datastore` is a collection of documents. Documents can be ingested into and deleted from a `Datastore`.
+
+
+        A `Datastore` can be linked to one or more `Agents`, and conversely, an `Agent` can be associated with one or more `Datastores` to ground its responses with relevant data. This flexible many-to-many relationship allows `Agents` to draw from multiple sources of information. This linkage of `Datastore` to `Agent` is done through the `Create Agent` or `Edit Agent` APIs.
+
+
+        > Note that self-serve users are currently required to create datastores through our UI. Otherwise, they will receive the following message: "This endpoint is disabled as you need to go through checkout. Please use the UI to make this request."'
+      operationId: create_datastore_datastores_post
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateDatastoreRequest'
+              $ref: '#/components/schemas/DatastoreInput'
       responses:
         '200':
-          description: Datastore created.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateDatastoreResponse'
+                $ref: '#/components/schemas/CreateDatastoreOutput'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
     get:
-      operationId: listDatastores
       tags:
-      - Datastores
+      - /datastores
       summary: List Datastores
-      description: Retrieve a list of datastores, with cursor-based pagination.
+      description: 'Retrieve a list of `Datastores`.
+
+
+        Performs `cursor`-based pagination if the number of `Datastores` exceeds the requested `limit`. The returned `cursor` can be passed to the next `GET /datastores` call to retrieve the next set of `Datastores`.'
+      operationId: list_datastores_datastores_get
       parameters:
-      - name: cursor
+      - name: agent_id
         in: query
         required: false
         schema:
           type: string
+          format: uuid
+          description: ID of the agent used to filter datastores. If provided, only datastores linked to this agent will be returned.
+          title: Agent Id
+        description: ID of the agent used to filter datastores. If provided, only datastores linked to this agent will be returned.
       - name: limit
         in: query
         required: false
         schema:
           type: integer
-          minimum: 1
           maximum: 1000
+          minimum: 1
+          description: Maximum number of datastores to return
+          default: 1000
+          title: Limit
+        description: Maximum number of datastores to return
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Cursor from the previous call to list datastores, used to retrieve the next set of results
+          title: Cursor
+        description: Cursor from the previous call to list datastores, used to retrieve the next set of results
       responses:
         '200':
-          description: A list of datastores.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListDatastoresResponse'
+                $ref: '#/components/schemas/DatastoreOutputList'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datastores/{datastore_id}/reset:
+    put:
+      tags:
+      - /datastores
+      summary: Reset Datastore
+      description: Reset the give `Datastore`. This operation is irreversible and it deletes all the documents associated with the datastore.
+      operationId: reset_datastore_datastores__datastore_id__reset_put
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the datastore to edit
+          title: Datastore Id
+        description: ID of the datastore to edit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /datastores/{datastore_id}:
-    get:
-      operationId: getDatastoreMetadata
+    put:
       tags:
-      - Datastores
-      summary: Get Datastore Metadata
+      - /datastores
+      summary: Edit Datastore Configuration
+      operationId: edit_datastore_configuration_datastores__datastore_id__put
       parameters:
-      - $ref: '#/components/parameters/DatastoreId'
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the datastore to edit
+          title: Datastore Id
+        description: ID of the datastore to edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditDatastoreInput'
       responses:
         '200':
-          description: Datastore metadata.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Datastore'
+                $ref: '#/components/schemas/EditDatastoreOutput'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
     delete:
-      operationId: deleteDatastore
       tags:
-      - Datastores
+      - /datastores
       summary: Delete Datastore
+      description: 'Delete a given `Datastore`, including all the documents ingested into it. This operation is irreversible.
+
+
+        This operation will fail with status code 400 if there is an active `Agent` associated with the `Datastore`.'
+      operationId: delete_datastore_datastores__datastore_id__delete
       parameters:
-      - $ref: '#/components/parameters/DatastoreId'
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the datastore to delete
+          title: Datastore Id
+        description: ID of the datastore to delete
       responses:
         '200':
-          description: Datastore deleted.
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /datastores/{datastore_id}/metadata:
+    get:
+      tags:
+      - /datastores
+      summary: Get Datastore Metadata
+      description: Get the details of a given `Datastore`, including its name, create time, and the list of `Agents` which are currently configured to use the `Datastore`.
+      operationId: get_datastore_metadata_datastores__datastore_id__metadata_get
+      parameters:
+      - name: datastore_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the datastore for which to get details
+          title: Datastore Id
+        description: ID of the datastore for which to get details
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDatastoreResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    CreateDatastoreRequest:
+    DatastoreUsages:
+      properties:
+        size_gb:
+          type: number
+          title: Size Gb
+          description: Actual size of the datastore in GB
       type: object
       required:
-      - name
+      - size_gb
+      title: DatastoreUsages
+    ChunkingMode:
+      type: string
+      enum:
+      - hierarchy_depth
+      - hierarchy_heading
+      - static_length
+      - page_level
+      title: ChunkingMode
+      description: 'Defines available chunking strategies.
+
+
+        - `hierarchy_depth`: Creates a new chunk whenever a higher-level section heading is encountered.
+
+
+        - `hierarchy_heading`: Creates a new chunk whenever any section heading is encountered.
+
+
+        - `static_length`: Creates chunks of a fixed length.
+
+        - `page_level`: Creates chunks that cannot run over page boundaries.'
+    DatastoreParseConfiguration:
       properties:
-        name:
+        figure_captioning_prompt:
           type: string
-        configuration:
-          type: object
-    CreateDatastoreResponse:
+          title: Figure Captioning Prompt
+          description: Prompt to use for generating image captions. Must be non-empty if `figure_caption_mode` is `custom`. Otherwise, must be null.
+        figure_caption_mode:
+          $ref: '#/components/schemas/DatastoreFigureCaptionMode'
+          title: Figure Caption Mode
+          description: "Mode for figure captioning. Options are `default`, `custom`, or `ignore`. Set to `ignore` to disable figure captioning. Set to `default` to use the default figure prompt, which generates a detailed caption for each figure. Set to `custom` to use a custom prompt.\n        "
+          default: default
+        enable_split_tables:
+          type: boolean
+          title: Enable Split Tables
+          description: "Whether to enable table splitting, which splits large tables into smaller tables with at most `max_split_table_cells` cells each. In each split table, the table headers are reproduced as the first row(s). This is useful for preserving context when tables are too large to fit into one chunk.\n        "
+          default: false
+        max_split_table_cells:
+          type: integer
+          title: Max Split Table Cells
+          description: Maximum number of cells for split tables. Ignored if `enable_split_tables` is False.
+          default: 100
+        ingestion_tier:
+          anyOf:
+          - $ref: '#/components/schemas/IngestionTier'
+          - type: 'null'
+          description: 'Ingestion tier for preset extraction configurations. Options: STANDARD, ADVANCED, PREMIUM, or None. When None (default), uses explicit config values or system defaults. When set, applies tier-based presets that can be overridden by explicit config.'
       type: object
+      title: DatastoreParseConfiguration
+      description: Configuration for data extraction settings from documents at datastore level. Controls settings for document parsing. Includes those from `/parse` API along with some extra ingestion-only ones.
+    IngestionTier:
+      type: string
+      enum:
+      - STANDARD
+      - ADVANCED
+      - PREMIUM
+      title: IngestionTier
+      description: Ingestion tier levels that determine extraction quality and cost.
+    DatastoreOutputList:
       properties:
-        id:
-          type: string
-          format: uuid
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    ListDatastoresResponse:
-      type: object
-      properties:
-        datastores:
-          type: array
-          items:
-            $ref: '#/components/schemas/Datastore'
         next_cursor:
-          type:
-          - string
-          - 'null'
-    Datastore:
+          type: string
+          title: Next Cursor
+          description: Next cursor to continue pagination. Omitted if there are no more datastores to retrieve.
+        datastores:
+          items:
+            $ref: '#/components/schemas/DatastoreOutputEntry'
+          type: array
+          title: Datastores
+          description: List of all datastores
       type: object
+      required:
+      - datastores
+      title: DatastoreOutputList
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DatastoreOutputEntry:
       properties:
         id:
           type: string
           format: uuid
+          title: Id
+          description: ID of the datastore
         name:
           type: string
+          title: Name
+          description: Name of the datastore
+        datastore_type:
+          type: string
+          const: UNSTRUCTURED
+          title: Datastore Type
+          description: Type of the datastore
+        configuration:
+          $ref: '#/components/schemas/UnstructuredDatastoreConfigModel'
+          title: Configuration
+          description: Configuration of the datastore
+          default: {}
         created_at:
           type: string
           format: date-time
-    ValidationErrorDetail:
+          title: Created At
+          description: Timestamp of when the datastore was created, in ISO format
       type: object
+      required:
+      - id
+      - name
+      - datastore_type
+      - created_at
+      title: DatastoreOutputEntry
+      description: Datastore output entry with additional fields for public API.
+    CreateDatastoreOutput:
       properties:
-        loc:
-          type: array
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: ID of the datastore
+      type: object
+      required:
+      - id
+      title: CreateDatastoreOutput
+    EditDatastoreOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: ID of the datastore
+      type: object
+      required:
+      - id
+      title: EditDatastoreOutput
+    ChunkingConfiguration:
+      properties:
+        chunking_mode:
+          $ref: '#/components/schemas/ChunkingMode'
+          title: Chunking Mode
+          description: 'Chunking mode to use. Options are: `hierarchy_depth`, `hierarchy_heading`, `static_length`, `page_level`. `hierarchy_depth` groups chunks of the same hierarchy level or below, additionally merging or splitting based on length constraints. `hierarchy_heading` splits chunks at every heading in the document hierarchy, additionally merging or splitting based on length constraints. `static_length` creates chunks of a fixed length. `page_level` creates chunks that cannot run over page boundaries.'
+          default: hierarchy_depth
+        max_chunk_length_tokens:
+          type: integer
+          maximum: 4096
+          minimum: 512
+          title: Max Chunk Length Tokens
+          description: Target maximum length of text tokens chunks for chunking. Chunk length may exceed this value in some edge cases.
+          default: 768
+        min_chunk_length_tokens:
+          type: integer
+          maximum: 3712
+          minimum: 128
+          title: Min Chunk Length Tokens
+          description: Target minimum length of chunks in tokens. Must be at least 384 tokens less than `max_chunk_length_tokens`. Chunk length may be shorter than this value in some edge cases. Ignored if `chunking_mode` is `page_level`.
+          default: 384
+        enable_hierarchy_based_contextualization:
+          type: boolean
+          title: Enable Hierarchy Based Contextualization
+          description: Whether to enable section-based contextualization for chunking
+          default: true
+      type: object
+      title: ChunkingConfiguration
+      description: Configuration for document chunking settings.
+    GetDatastoreResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Name of the datastore
+        configuration:
+          anyOf:
+          - $ref: '#/components/schemas/UnstructuredDatastoreConfigModel'
+          - type: 'null'
+          title: Configuration
+          description: Configuration of the datastore. Not set if default configuration is in use.
+        datastore_type:
+          type: string
+          const: UNSTRUCTURED
+          title: Datastore Type
+          description: Type of the datastore
+          default: UNSTRUCTURED
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Timestamp of when the datastore was created
+        agent_ids:
           items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
+            type: string
+            format: uuid
+          type: array
+          title: Agent Ids
+          description: List of agents using this datastore
+        datastore_usages:
+          $ref: '#/components/schemas/DatastoreUsages'
+          title: Datastore Usages
+          description: Datastore usage
+      type: object
+      required:
+      - name
+      - created_at
+      - agent_ids
+      title: GetDatastoreResponse
+    UnstructuredDatastoreConfigModel:
+      properties:
+        parsing:
+          $ref: '#/components/schemas/DatastoreParseConfiguration'
+          description: Configuration for document parsing
+        chunking:
+          $ref: '#/components/schemas/ChunkingConfiguration'
+          description: Configuration for document chunking
+        html_config:
+          $ref: '#/components/schemas/HtmlConfiguration'
+          description: Configuration for HTML Extraction
+      additionalProperties: false
+      type: object
+      title: UnstructuredDatastoreConfigModel
+      description: Configuration for unstructured datastores.
+    DatastoreFigureCaptionMode:
+      type: string
+      enum:
+      - default
+      - custom
+      - ignore
+      title: DatastoreFigureCaptionMode
+      description: 'Mode for figure captioning.
+
+
+        - `default`: Use the default figure prompt, which generates a detailed caption for each figure.
+
+
+        - `custom`: Use a custom prompt.
+
+
+        - `ignore`: Disable figure captioning.'
+    EmptyResponse:
+      properties: {}
+      type: object
+      title: EmptyResponse
+    DatastoreInput:
+      properties:
+        name:
           type: string
-        type:
+          title: Name
+          description: Name of the datastore
+        configuration:
+          $ref: '#/components/schemas/UnstructuredDatastoreConfigModel'
+          title: Configuration
+          description: Configuration of the datastore. If not provided, default configuration is used.
+          default: {}
+      type: object
+      required:
+      - name
+      title: DatastoreInput
+      description: DatastoreInput for creating a new datastore. If no type is provided, we default to unstructured.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    EditDatastoreInput:
+      properties:
+        name:
           type: string
-  parameters:
-    DatastoreId:
-      name: datastore_id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: ID of the datastore.
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
+          title: Name
+          description: Name of the datastore
+        configuration:
+          $ref: '#/components/schemas/UnstructuredDatastoreConfigModel'
+          title: Configuration
+          description: Configuration of the datastore. If not provided, current configuration is retained.
+          default: {}
+      type: object
+      title: EditDatastoreInput
+      description: Input model for editing a datastore.
+    HtmlConfiguration:
+      properties:
+        max_chunk_length_tokens:
+          type: integer
+          maximum: 4096
+          minimum: 512
+          title: Max Chunk Length Tokens
+          description: Target maximum length of text tokens chunks for chunking. Chunk length may exceed this value in some edge cases.
+          default: 768
+      type: object
+      title: HtmlConfiguration
+      description: Configuration for HTML document ingestion settings.
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
-      description: Contextual AI API key supplied as a Bearer token.
+      bearerFormat: API Key

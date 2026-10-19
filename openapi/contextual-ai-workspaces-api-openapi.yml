@@ -1,0 +1,134 @@
+openapi: 3.2.0
+info:
+  title: Endpoints /workspaces API
+  version: '1.0'
+servers:
+- url: https://api.contextual.ai/v1
+security:
+- BearerAuth: []
+tags:
+- name: /workspaces
+paths:
+  /workspaces/consent:
+    get:
+      tags:
+      - /workspaces
+      summary: Get Consent
+      description: Retrieve the current consent status for the workspace.
+      operationId: get_consent_workspaces_consent_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetConsentResponse'
+    put:
+      tags:
+      - /workspaces
+      summary: Update Consent
+      description: Update the consent status for the workspace.
+      operationId: update_consent_workspaces_consent_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateConsentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ConsentType:
+      type: string
+      enum:
+      - CONSENT_FULL
+      - CONSENT_SUPPORT
+      - REVOKE
+      - UNKNOWN
+      title: ConsentType
+    GetConsentResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          description: The current consent status in `ConsentType`.
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+          description: The email of the user who granted or revoked the consent
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+          description: The timestamp when the consent was granted or revoked
+      type: object
+      required:
+      - status
+      - email
+      - created_at
+      title: GetConsentResponse
+      description: Response for the endpoint that retrieves the consent status for the workspace.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    UpdateConsentRequest:
+      properties:
+        type:
+          $ref: '#/components/schemas/ConsentType'
+          description: The new consent status
+      type: object
+      required:
+      - type
+      title: UpdateConsentRequest
+      description: Request to update the consent status for the workspace.
+    EmptyResponse:
+      properties: {}
+      type: object
+      title: EmptyResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key

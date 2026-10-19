@@ -1,29 +1,69 @@
 openapi: 3.2.0
 info:
-  title: Contextual AI Platform Agents API
-  description: REST API for the Contextual AI enterprise RAG platform. Provides agents (create / query grounded RAG agents), datastores and documents (ingest and manage the knowledge corpus), and standalone component APIs - Generate (grounded generation with the GLM), Rerank (instruction-following reranker), Parse (document parsing into AI-ready markdown), and LMUnit (natural-language unit-test evaluation). All endpoints authenticate with a Bearer API key.
-  termsOfService: https://contextual.ai/terms-of-service/
-  contact:
-    name: Contextual AI Support
-    url: https://docs.contextual.ai
-    email: support@contextual.ai
+  title: Endpoints /agents API
   version: '1.0'
 servers:
 - url: https://api.contextual.ai/v1
-  description: Contextual AI production API
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
-- name: Agents
-  description: Create, configure, and manage RAG agents.
+- name: /agents
 paths:
   /agents:
-    post:
-      operationId: createAgent
+    get:
       tags:
-      - Agents
+      - /agents
+      summary: List Agents
+      description: Retrieve a list of all `Agents`.
+      operationId: list_agents_agents_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 1000
+          minimum: 1
+          description: Maximum number of agents to return
+          default: 1000
+          title: Limit
+        description: Maximum number of agents to return
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Cursor from the previous call to list agents, used to retrieve the next set of results
+          title: Cursor
+        description: Cursor from the previous call to list agents, used to retrieve the next set of results
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAgentsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - /agents
       summary: Create Agent
-      description: Create a new RAG agent. If no datastore_ids are supplied, a new datastore is created automatically and associated with the agent.
+      description: 'Create a new `Agent` with a specific configuration.
+
+
+        This creates a specialized RAG `Agent` which queries over one or multiple `Datastores` to retrieve relevant data on which its generations are grounded.
+
+
+        Retrieval and generation parameters are defined in the provided `Agent` configuration.
+
+
+        > Note that self-serve users are currently required to create agents through our UI. Otherwise, they will receive the following message: "This endpoint is disabled as you need to go through checkout. Please use the UI to make this request."'
+      operationId: create_agent_agents_post
       requestBody:
         required: true
         content:
@@ -32,220 +72,928 @@ paths:
               $ref: '#/components/schemas/CreateAgentRequest'
       responses:
         '200':
-          description: Agent created.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateAgentResponse'
+                $ref: '#/components/schemas/CreateAgentOutput'
         '422':
-          $ref: '#/components/responses/ValidationError'
-    get:
-      operationId: listAgents
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}:
+    delete:
       tags:
-      - Agents
-      summary: List Agents
-      description: Retrieve a list of agents in the workspace, with cursor-based pagination.
+      - /agents
+      summary: Delete Agent
+      description: 'Delete a given `Agent`. This is an irreversible operation.
+
+
+        Note: `Datastores` which are associated with the `Agent` will not be deleted, even if no other `Agent` is using them. To delete a `Datastore`, use the `DELETE /datastores/{datastore_id}` API.'
+      operationId: delete_agent_agents__agent_id__delete
       parameters:
-      - name: cursor
-        in: query
-        required: false
+      - name: agent_id
+        in: path
+        required: true
         schema:
           type: string
-        description: Cursor from a previous list response for pagination.
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 1000
-        description: Maximum number of agents to return.
+          format: uuid
+          description: ID of the agent to delete
+          title: Agent Id
+        description: ID of the agent to delete
       responses:
         '200':
-          description: A list of agents.
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListAgentsResponse'
+                $ref: '#/components/schemas/EmptyResponse'
         '422':
-          $ref: '#/components/responses/ValidationError'
-  /agents/{agent_id}:
-    get:
-      operationId: getAgentMetadata
-      tags:
-      - Agents
-      summary: Get Agent Metadata
-      parameters:
-      - $ref: '#/components/parameters/AgentId'
-      responses:
-        '200':
-          description: Agent metadata.
+          description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Agent'
-        '422':
-          $ref: '#/components/responses/ValidationError'
-    patch:
-      operationId: editAgent
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
       tags:
-      - Agents
+      - /agents
       summary: Edit Agent
+      description: 'Modify a given `Agent` to utilize the provided configuration.
+
+
+        Fields not included in the request body will not be modified.'
+      operationId: edit_agent_agents__agent_id__put
       parameters:
-      - $ref: '#/components/parameters/AgentId'
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the agent to edit
+          title: Agent Id
+        description: ID of the agent to edit
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EditAgentRequest'
+              $ref: '#/components/schemas/ModifyAgentRequest'
       responses:
         '200':
-          description: Agent updated.
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
         '422':
-          $ref: '#/components/responses/ValidationError'
-    delete:
-      operationId: deleteAgent
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}/metadata:
+    get:
       tags:
-      - Agents
-      summary: Delete Agent
+      - /agents
+      summary: Get Agent Metadata
+      description: Get metadata and configuration of a given `Agent`.
+      operationId: get_agent_metadata_agents__agent_id__metadata_get
       parameters:
-      - $ref: '#/components/parameters/AgentId'
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the agent for which to retrieve details
+          title: Agent Id
+        description: ID of the agent for which to retrieve details
       responses:
         '200':
-          description: Agent deleted.
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAgentResponse'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}/reset:
+    put:
+      tags:
+      - /agents
+      summary: Reset Agent
+      description: Reset a given `Agent` to default configuration.
+      operationId: reset_agent_agents__agent_id__reset_put
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the agent to reset
+          title: Agent Id
+        description: ID of the agent to reset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}/template:
+    post:
+      tags:
+      - /agents
+      summary: Save Template
+      operationId: save_template_agents__agent_id__template_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the agent
+          title: Agent Id
+        description: ID of the agent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveTemplateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/templates:
+    get:
+      tags:
+      - /agents
+      summary: List Templates
+      description: Retrieve a list of all available Templates.
+      operationId: list_templates_agents_templates_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTemplatesResponse'
+  /agents/templates/acl:
+    get:
+      tags:
+      - /agents
+      summary: List Agent Composer Templates
+      description: Retrieve a list of all available Agent Composer Templates.
+      operationId: list_acl_templates_agents_templates_acl_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListACLTemplatesResponse'
+  /agents/templates/{template}:
+    get:
+      tags:
+      - /agents
+      summary: Get Template Configuration
+      operationId: get_template_configuration_agents_templates__template__get
+      parameters:
+      - name: template
+        in: path
+        required: true
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/DefaultTemplateName'
+          - type: string
+          description: Template for which to get config, can be a built-in template (DefaultTemplateName) or a custom template name
+          title: Template
+        description: Template for which to get config, can be a built-in template (DefaultTemplateName) or a custom template name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAgentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /agents/{agent_id}/copy:
+    post:
+      tags:
+      - /agents
+      summary: Copy Agent
+      description: Copy an existing agent with all its configurations and datastore associations. The copied agent will have "[COPY]" appended to its name.
+      operationId: Copy_Agent_agents__agent_id__copy_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: ID of the agent to copy
+          title: Agent Id
+        description: ID of the agent to copy
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAgentOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    CreateAgentResponse:
-      type: object
+    GlobalConfig:
       properties:
-        id:
-          type: string
-          format: uuid
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-    Agent:
+        enable_rerank:
+          type: boolean
+          title: Enable Rerank
+          description: Enables reranking of retrieved chunks
+        enable_filter:
+          type: boolean
+          title: Enable Filter
+          description: Enables filtering of retrieved chunks with a separate LLM
+        enable_multi_turn:
+          type: boolean
+          title: Enable Multi Turn
+          description: Enables multi-turn conversations. This feature is currently experimental and will be improved.
+        should_check_retrieval_need:
+          type: boolean
+          title: Should Check Retrieval Need
+          description: Enables checking if retrieval is needed for the query. This feature is currently experimental and will be improved.
+      additionalProperties: false
       type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        description:
-          type: string
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationErrorDetail'
-    ListAgentsResponse:
-      type: object
-      properties:
-        agents:
-          type: array
-          items:
-            $ref: '#/components/schemas/Agent'
-        next_cursor:
-          type:
-          - string
-          - 'null'
-    EditAgentRequest:
-      type: object
+      title: GlobalConfig
+      description: Captures global configs
+    SaveTemplateRequest:
       properties:
         name:
           type: string
-        description:
-          type: string
-        system_prompt:
-          type: string
-        suggested_queries:
-          type: array
-          items:
-            type: string
-        datastore_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-    ValidationErrorDetail:
-      type: object
-      properties:
-        loc:
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    CreateAgentRequest:
+          title: Name
+          description: The name of the template
+      additionalProperties: false
       type: object
       required:
       - name
+      title: SaveTemplateRequest
+    ValidationError:
       properties:
-        name:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          minLength: 3
-          maxLength: 200
-        description:
+          title: Message
+        type:
           type: string
-          maxLength: 500
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    RetrievalConfig:
+      properties:
+        top_k_retrieved_chunks:
+          type: integer
+          title: Top K Retrieved Chunks
+          description: The maximum number of retrieved chunks from the datastore.
+          ge: 1
+          le: 200
+        lexical_alpha:
+          type: number
+          title: Lexical Alpha
+          description: The weight of lexical search during retrieval. Must sum to 1 with semantic_alpha.
+          le: 1
+        semantic_alpha:
+          type: number
+          title: Semantic Alpha
+          description: The weight of semantic search during retrieval. Must sum to 1 with lexical_alpha.
+          le: 1
+      type: object
+      title: RetrievalConfig
+      description: Captures Retrieval configurations for an Agent
+    ModifyAgentRequest:
+      properties:
         system_prompt:
           type: string
           maxLength: 8000
+          title: System Prompt
+          description: Instructions that your agent references when generating responses. Note that we do not guarantee that the system will follow these instructions exactly.
         no_retrieval_system_prompt:
           type: string
           maxLength: 8000
+          title: No Retrieval System Prompt
+          description: Instructions on how the agent should respond when there are no relevant retrievals that can be used to answer a query.
         multiturn_system_prompt:
           type: string
           maxLength: 8000
+          title: Multiturn System Prompt
+          description: Instructions on how the agent should handle multi-turn conversations.
         filter_prompt:
           type: string
           maxLength: 8000
+          title: Filter Prompt
+          description: The prompt to an LLM which determines whether retrieved chunks are relevant to a given query and filters out irrelevant chunks.
         suggested_queries:
-          type: array
           items:
             type: string
-        datastore_ids:
           type: array
+          title: Suggested Queries
+          description: These queries will show up as suggestions in the Contextual UI when users load the agent. We recommend including common queries that users will ask, as well as complex queries so users understand the types of complex queries the system can handle. The max length of all the suggested queries is 1000.
+        agent_configs:
+          $ref: '#/components/schemas/AgentConfigs'
+          title: Agent Configs
+          description: The following advanced parameters are experimental and subject to change.
+        name:
+          type: string
+          maxLength: 200
+          minLength: 3
+          title: Name
+          description: Name of the agent
+        description:
+          type: string
+          maxLength: 500
+          title: Description
+          description: Description of the agent
+        datastore_ids:
           items:
             type: string
             format: uuid
+          type: array
+          title: Datastore Ids
+          description: IDs of the datastore to associate with the agent.
+      additionalProperties: false
+      type: object
+      title: ModifyAgentRequest
+    ACLTemplateEntry:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Unique identifier for the Agent Composer template
+        name:
+          type: string
+          title: Name
+          description: Display name of the template
+        description:
+          type: string
+          title: Description
+          description: Description of what this template is for
+        badges:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Badges
+          description: Optional badge identifiers for UI presentation (e.g., 'dynamic-agent')
         template_name:
           type: string
-  responses:
-    ValidationError:
-      description: Validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/HTTPValidationError'
-  parameters:
-    AgentId:
-      name: agent_id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: ID of the agent.
+          title: Template Name
+          description: The DB template name to use (e.g., 'finance', 'default')
+        acl_config_name:
+          $ref: '#/components/schemas/ACLConfigName'
+          description: The Agent Composer config name to use (e.g., 'default_query', 'datastore_search')
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - template_name
+      - acl_config_name
+      title: ACLTemplateEntry
+      description: An Agent Composer template entry with metadata
+    BaseMetadataFilter:
+      properties:
+        field:
+          type: string
+          title: Field
+          description: Field name to search for in the metadata
+        operator:
+          $ref: '#/components/schemas/FilterMetadataOperator'
+          description: Operator to be used for the filter.
+        value:
+          anyOf:
+          - type: string
+          - type: integer
+          - type: number
+          - type: boolean
+          - items:
+              anyOf:
+              - type: string
+              - type: integer
+              - type: number
+              - type: boolean
+            type: array
+          - type: 'null'
+          title: Value
+          description: The value to be searched for in the field. In case of exists operator, it is not needed.
+      type: object
+      required:
+      - field
+      - operator
+      title: BaseMetadataFilter
+      description: "Defines a custom metadata filter. The expected input is a dict which can have different operators, fields and values. For example:\n\n    {\"field\": \"title\", \"operator\": \"startswith\", \"value\": \"hr-\"}\n\nUse **lowercase** for `value` when not using `equals` operator. For document_id and date_created the query is built using direct query without nesting."
+    AgentEntry:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: ID of the agent
+        name:
+          type: string
+          title: Name
+          description: Name of the agent
+        description:
+          type: string
+          title: Description
+          description: Description of the agent
+      type: object
+      required:
+      - id
+      - name
+      - description
+      title: AgentEntry
+    ListACLTemplatesResponse:
+      properties:
+        templates:
+          items:
+            $ref: '#/components/schemas/ACLTemplateEntry'
+          type: array
+          title: Templates
+          description: List of available Agent Composer templates.
+          default: []
+      type: object
+      title: ListACLTemplatesResponse
+    GenerationModelName:
+      type: string
+      enum:
+      - Contextual GLM
+      - Gemini 2.5 Pro
+      - Gemini 2.5 Flash
+      - Gemini 2.0 Flash
+      - Gemini 2.0 Flash Lite
+      - Gemini 3 Flash
+      - Gemini 3 Pro
+      - Claude Opus 4
+      - Claude Sonnet 4
+      - GPT-5
+      - Default
+      title: GenerationModelName
+      description: User-facing model names for API requests.
+    CompositeMetadataFilter:
+      properties:
+        filters:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/BaseMetadataFilter'
+            - $ref: '#/components/schemas/CompositeMetadataFilter'
+          type: array
+          title: Filters
+          description: 'Filters added to the query for filtering docs '
+        operator:
+          anyOf:
+          - $ref: '#/components/schemas/CompositeOperator'
+          - type: 'null'
+          description: Composite operator to be used to combine filters
+      type: object
+      required:
+      - filters
+      title: CompositeMetadataFilter
+      description: '"Defines a custom metadata filter as a Composite MetadataFilter. Which can be be a list of filters or nested filters.'
+    FilterAndRerankConfig:
+      properties:
+        top_k_reranked_chunks:
+          type: integer
+          title: Top K Reranked Chunks
+          description: The number of highest ranked chunks after reranking to be used
+        reranker_score_filter_threshold:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: Reranker Score Filter Threshold
+          description: 'If the reranker relevance score associated with a chunk is below this threshold, then the chunk will be filtered out and not used for generation. Scores are between 0 and 1, with scores closer to 1 being more relevant. Set the value to 0 to disable the reranker score filtering. '
+          default: 0
+        rerank_instructions:
+          type: string
+          title: Rerank Instruction
+          description: 'Instructions that the reranker references when ranking retrievals. Note that we do not guarantee that the reranker will follow these instructions exactly. Examples: "Prioritize internal sales documents over market analysis reports. More recent documents should be weighted higher. Enterprise portal content supersedes distributor communications." and "Emphasize forecasts from top-tier investment banks. Recent analysis should take precedence. Disregard aggregator sites and favor detailed research notes over news summaries."'
+        default_metadata_filters:
+          anyOf:
+          - $ref: '#/components/schemas/BaseMetadataFilter'
+          - $ref: '#/components/schemas/CompositeMetadataFilter'
+          title: Default Metadata Filters
+          description: Optional metadata filter which is applied while retrieving from every datastore linked to this agent.
+          examples:
+          - filters:
+            - field: field1
+              operator: equals
+              value: value1
+            operator: AND
+        per_datastore_metadata_filters:
+          additionalProperties:
+            $ref: '#/components/schemas/CompositeMetadataFilter'
+          type: object
+          title: Per Datastore Metadata Filters
+          description: Defines an optional custom metadata filter per datastore ID. Each entry in the dictionary should have a datastore UUID as the key, and the value should be a metadata filter definition. The filter will be applied in addition to filter(s) specified in `default_metadata_filters` and in the `documents_filters` field in the `/query` request during retrieval.
+          examples:
+          - d49609d9-61c3-4a67-b3bd-5196b10da560:
+              filters:
+              - field: field1
+                operator: equals
+                value: value1
+              operator: AND
+      type: object
+      title: FilterAndRerankConfig
+      description: Captures Filter and Rerank configurations for an Agent
+    GenerateResponseConfig:
+      properties:
+        model:
+          $ref: '#/components/schemas/GenerationModelName'
+          title: Model
+          description: The model to use for response generation.
+        max_new_tokens:
+          type: integer
+          title: Max New Tokens
+          description: The maximum number of tokens the model can generate in a response.
+        temperature:
+          type: number
+          title: Temperature
+          description: The sampling temperature, which affects the randomness in the response.
+          ge: 0
+          le: 1
+        top_p:
+          type: number
+          title: Top P
+          description: A parameter for nucleus sampling, an alternative to `temperature` which also affects the randomness of the response.
+          ge: 0
+          le: 1
+        frequency_penalty:
+          type: number
+          title: Frequency Penalty
+          description: This parameter adjusts how the model treats repeated tokens during text generation.
+        seed:
+          type: integer
+          title: Seed
+          description: This parameter controls the randomness of how the model selects the next tokens during text generation.
+        calculate_groundedness:
+          type: boolean
+          title: Calculate Groundedness
+          description: This parameter controls generation of groundedness scores.
+        avoid_commentary:
+          type: boolean
+          title: Avoid Commentary
+          description: Flag to indicate whether the model should avoid providing additional commentary in responses. Commentary is conversational in nature and does not contain verifiable claims; therefore, commentary is not strictly grounded in available context. However, commentary may provide useful context which improves the helpfulness of responses.
+          default: false
+      additionalProperties: false
+      type: object
+      title: GenerateResponseConfig
+      description: Captures advance LLM configurations for an Agent
+    ACLConfig:
+      properties:
+        acl_active:
+          type: boolean
+          title: Acl Active
+          description: Deprecated field. To be removed in the future.
+        acl_yaml:
+          type: string
+          title: Acl Yaml
+          description: The YAML file to use for Agent Composer.
+      type: object
+      title: ACLConfig
+      description: Captures Agent Composer configurations for an Agent
+    ReformulationConfig:
+      properties:
+        enable_query_expansion:
+          type: boolean
+          title: Enable Query Expansion
+          description: Whether to enable query expansion.
+        query_expansion_prompt:
+          type: string
+          title: Query Expansion Prompt
+          description: The prompt to use for query expansion.
+        enable_query_decomposition:
+          type: boolean
+          title: Enable Query Decomposition
+          description: Whether to enable query decomposition.
+        query_decomposition_prompt:
+          type: string
+          title: Query Decomposition Prompt
+          description: The prompt to use for query decomposition.
+      type: object
+      title: ReformulationConfig
+      description: Captures Query Reformulation configurations for an Agent
+    TranslationConfig:
+      properties:
+        translate_needed:
+          type: boolean
+          title: Translate Needed
+          description: Whether to enable translation for the agent's responses.
+        translate_confidence:
+          type: number
+          title: Translate Confidence
+          description: The confidence threshold for translation.
+      type: object
+      title: TranslationConfig
+      description: Captures Translation configurations for an Agent
+    CreateAgentRequest:
+      properties:
+        system_prompt:
+          type: string
+          maxLength: 8000
+          title: System Prompt
+          description: Instructions that your agent references when generating responses. Note that we do not guarantee that the system will follow these instructions exactly.
+        no_retrieval_system_prompt:
+          type: string
+          maxLength: 8000
+          title: No Retrieval System Prompt
+          description: Instructions on how the agent should respond when there are no relevant retrievals that can be used to answer a query.
+        multiturn_system_prompt:
+          type: string
+          maxLength: 8000
+          title: Multiturn System Prompt
+          description: Instructions on how the agent should handle multi-turn conversations.
+        filter_prompt:
+          type: string
+          maxLength: 8000
+          title: Filter Prompt
+          description: The prompt to an LLM which determines whether retrieved chunks are relevant to a given query and filters out irrelevant chunks.
+        suggested_queries:
+          items:
+            type: string
+          type: array
+          title: Suggested Queries
+          description: These queries will show up as suggestions in the Contextual UI when users load the agent. We recommend including common queries that users will ask, as well as complex queries so users understand the types of complex queries the system can handle. The max length of all the suggested queries is 1000.
+        agent_configs:
+          $ref: '#/components/schemas/AgentConfigs'
+          title: Agent Configs
+          description: The following advanced parameters are experimental and subject to change.
+        name:
+          type: string
+          maxLength: 200
+          minLength: 3
+          title: Name
+          description: Name of the agent
+        description:
+          type: string
+          maxLength: 500
+          title: Description
+          description: Description of the agent
+          default: ''
+        template_name:
+          anyOf:
+          - $ref: '#/components/schemas/DefaultTemplateName'
+          - type: string
+          title: Template Name
+          description: The template defining the base configuration for the agent. This can be a built-in template (DefaultTemplateName) or a custom template name
+          default: default
+        datastore_ids:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Datastore Ids
+          description: The IDs of the datastore to associate with this agent.
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CreateAgentRequest
+      description: Input to Create Agent request
+    DefaultTemplateName:
+      type: string
+      enum:
+      - default
+      - finance
+      - customer_support
+      - company_policy_q_and_a
+      title: DefaultTemplateName
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    FilterMetadataOperator:
+      type: string
+      enum:
+      - equals
+      - containsany
+      - exists
+      - startswith
+      - gt
+      - gte
+      - lt
+      - lte
+      - notequals
+      - between
+      - wildcard
+      title: FilterMetadataOperator
+    CreateAgentOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: ID of the agent
+        datastore_ids:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Datastore Ids
+          description: IDs of the datastores associated with the agent. If no datastore was provided as part of the request, this is a singleton list containing the ID of the automatically created datastore.
+      type: object
+      required:
+      - id
+      - datastore_ids
+      title: CreateAgentOutput
+      description: Response to POST /agents request
+    ACLConfigName:
+      type: string
+      enum:
+      - default_query
+      - datastore_search
+      - web_search
+      - meta_queries
+      - structured_unstructured_search
+      - default_query_fine_grained
+      - conditional
+      - instant_search_test
+      - root_cause_analysis
+      title: ACLConfigName
+    AgentConfigs:
+      properties:
+        retrieval_config:
+          $ref: '#/components/schemas/RetrievalConfig'
+          title: Retrieval Config
+          description: Parameters that affect how the agent retrieves from datastore(s)
+        filter_and_rerank_config:
+          $ref: '#/components/schemas/FilterAndRerankConfig'
+          title: Filter And Rerank Config
+          description: Parameters that affect filtering and reranking of retrieved knowledge
+        generate_response_config:
+          $ref: '#/components/schemas/GenerateResponseConfig'
+          title: Generate Response Config
+          description: Parameters that affect response generation
+        global_config:
+          $ref: '#/components/schemas/GlobalConfig'
+          title: Global Config
+          description: Parameters that affect the agent's overall RAG workflow
+        reformulation_config:
+          $ref: '#/components/schemas/ReformulationConfig'
+          title: Reformulation Config
+          description: Parameters that affect the agent's query reformulation
+        acl_config:
+          $ref: '#/components/schemas/ACLConfig'
+          title: Acl Config
+          description: Parameters that affect the agent's Agent Composer workflow
+        translation_config:
+          $ref: '#/components/schemas/TranslationConfig'
+          title: Translation Config
+          description: Parameters that affect the agent's translation workflow
+      type: object
+      title: AgentConfigs
+      description: Response to configs for different components
+    GetAgentResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Name of the agent
+        description:
+          type: string
+          title: Description
+          description: Description of the agent
+        datastore_ids:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Datastore Ids
+          description: The IDs of the datastore(s) associated with the agent
+        template_name:
+          type: string
+          title: Template Name
+          description: The template used to create this agent.
+        system_prompt:
+          type: string
+          title: System Prompt
+          description: Instructions that your agent references when generating responses. Note that we do not guarantee that the system will follow these instructions exactly.
+        filter_prompt:
+          type: string
+          title: Filter Prompt
+          description: The prompt to an LLM which determines whether retrieved chunks are relevant to a given query and filters out irrelevant chunks. This prompt is applied per chunk.
+        no_retrieval_system_prompt:
+          type: string
+          title: No Retrieval System Prompt
+          description: Instructions on how the agent should respond when there are no relevant retrievals that can be used to answer a query.
+        multiturn_system_prompt:
+          type: string
+          title: Multiturn System Prompt
+          description: Instructions on how the agent should handle multi-turn conversations.
+        suggested_queries:
+          items:
+            type: string
+          type: array
+          title: Suggested Queries
+          description: These queries will show up as suggestions in the Contextual UI when users load the agent. We recommend including common queries that users will ask, as well as complex queries so users understand the types of complex queries the system can handle. The max length of all the suggested queries is 1000.
+        agent_configs:
+          $ref: '#/components/schemas/AgentConfigs'
+          title: Agent Configs
+          description: The following advanced parameters are experimental and subject to change.
+      type: object
+      required:
+      - name
+      - datastore_ids
+      - template_name
+      title: GetAgentResponse
+      description: Response to GET Agent request
+    ListTemplatesResponse:
+      properties:
+        templates:
+          items:
+            type: string
+          type: array
+          title: Templates
+          description: List of available templates.
+          default: []
+      type: object
+      title: ListTemplatesResponse
+    EmptyResponse:
+      properties: {}
+      type: object
+      title: EmptyResponse
+    ListAgentsResponse:
+      properties:
+        next_cursor:
+          type: string
+          title: Next Cursor
+          description: Next cursor to continue pagination. Omitted if there are no more agents to retrieve.
+        agents:
+          items:
+            $ref: '#/components/schemas/AgentEntry'
+          type: array
+          title: Agents
+          description: List of active agents
+          default: []
+      type: object
+      title: ListAgentsResponse
+    CompositeOperator:
+      type: string
+      enum:
+      - AND
+      - OR
+      - AND_NOT
+      title: CompositeOperator
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
-      description: Contextual AI API key supplied as a Bearer token.
+      bearerFormat: API Key
