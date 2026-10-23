@@ -539,3 +539,9 @@ components:
       type: http
       scheme: bearer
       bearerFormat: API Key
+x-provenance:
+  method: harvested
+  publisher: Contextual AI
+  source: https://docs.contextual.ai/api-reference/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
