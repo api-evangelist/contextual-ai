@@ -53,3 +53,28 @@
     builder: provider (package published from the provider's own domain)
   status: not-a-workflow
   arazzo: null
+- slug: contextual-ai-n8n-n8n-community
+  label: n8n (n8n-community)
+  partner: n8n
+  partner_name: n8n (n8n-community)
+  type: marketplace
+  marketplace: n8n-community
+  channel: partner-built
+  evidence: https://www.npmjs.com/package/n8n-nodes-contextualai
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: contextual-ai-hugging-face-hugging-face-hub
+  label: Hugging Face (hugging-face-hub)
+  partner: hugging-face
+  partner_name: Hugging Face (hugging-face-hub)
+  category: Hugging Face Hub datasets
+  type: marketplace
+  marketplace: hugging-face-hub
+  channel: partner-built
+  evidence: https://huggingface.co/ContextualAI
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
