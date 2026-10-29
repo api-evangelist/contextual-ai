@@ -1,4 +1,4 @@
-# Contextual AI (contextual-ai)
+# Contextual AI
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,183 +66,155 @@
 
 Contextual AI is an enterprise RAG platform built around a Grounded Language Model (GLM) engineered to minimize hallucinations. Its REST API exposes end-to-end RAG agents (create, configure, query) plus standalone component APIs - Generate, Rerank, Parse, and LMUnit - over datastores of ingested documents, all authenticated with a Bearer API key.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/contextual-ai/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/contextual-ai/refs/heads/main/apis.yml)
+**Areas:** Artificial Intelligence · RAG · LLM · Grounded Language Model · Enterprise · Real-Time · Foundation Models
 
-## Tags
+## Contextual AI on APIs.io
 
-- AI
-- RAG
-- LLM
-- Grounded Language Model
-- Enterprise
+Everything profiled for Contextual AI is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/contextual-ai/](https://apis.io/providers/contextual-ai/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (9)
 
-- **Created:** 2026-06-20
-- **Modified:** 2026-06-20
+- [Contextual AI Agents API](https://apis.io/apis/contextual-ai/contextual-ai-agents-api/) — Create, configure, and manage RAG agents.
+- [Contextual AI Agents Query API](https://apis.io/apis/contextual-ai/contextual-ai-agents-query-api/) — Query agents for grounded responses, retrievals, metrics, and feedback.
+- [Contextual AI Datastores API](https://apis.io/apis/contextual-ai/contextual-ai-datastores-api/) — Create and manage datastores that hold ingested knowledge.
+- [Contextual AI Documents API](https://apis.io/apis/contextual-ai/contextual-ai-documents-api/) — Ingest and manage documents within a datastore.
+- [Contextual AI Generate API](https://apis.io/apis/contextual-ai/contextual-ai-generate-api/) — Grounded generation with the Grounded Language Model (GLM).
+- [Contextual AI LMUnit API](https://apis.io/apis/contextual-ai/contextual-ai-lmunit-api/) — Evaluate model responses with natural-language unit tests.
+- [Contextual AI Parse API](https://apis.io/apis/contextual-ai/contextual-ai-parse-api/) — Parse documents into structured, AI-ready markdown.
+- [Contextual AI Rerank API](https://apis.io/apis/contextual-ai/contextual-ai-rerank-api/) — Instruction-following reranking of retrieved passages.
+- [Contextual AI Users API](https://apis.io/apis/contextual-ai/contextual-ai-users-api/) — Manage workspace users.
 
-## APIs
+### Published properties
 
-### Contextual AI Agents API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Create, configure, edit, copy, reset, and delete enterprise RAG agents, including system prompts, suggested queries, templates, and associated datastores.
+#### AsyncAPI (1)
 
-- **Human URL:** [https://docs.contextual.ai/api-reference/agents/create-agent](https://docs.contextual.ai/api-reference/agents/create-agent)
-- **Base URL:** `https://api.contextual.ai/v1`
+Event-driven and webhook contracts.
 
-#### Tags
+- [Contextual AI Agent Query Streaming (HTTP + SSE)](https://apis.io/asyncapis/contextual-ai/contextual-ai-asyncapi/)
 
-- Agents
-- RAG
-- Configuration
+#### Event channels (1)
 
-#### Properties
+Individual events and webhooks the provider emits.
 
-- [Documentation](https://docs.contextual.ai/user-guides/beginner-guide)
-- [API Reference](https://docs.contextual.ai/api-reference/agents/create-agent)
-- [OpenAPI](openapi/contextual-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/contextual-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/contextual-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [/agents/{agent_id}/query](https://apis.io/channels/contextual-ai/agents-agent-id-query/)
 
-### Contextual AI Agent Query API
+#### Agentic access (1)
 
-Query an agent for grounded responses with inline attributions, retrieval contents, and groundedness scores; supports SSE token streaming via stream=true, retrievals-only mode, conversation continuity, and feedback.
+Which operations an agent can call, which act, and which need a human in the loop.
 
-- **Human URL:** [https://docs.contextual.ai/api-reference/agents-query/query](https://docs.contextual.ai/api-reference/agents-query/query)
-- **Base URL:** `https://api.contextual.ai/v1`
+- [Contextual Ai Agentic Access](https://apis.io/agentic-access/contextual-ai/contextual-ai-agentic-access/)
 
-#### Tags
+#### Collections (10)
 
-- Query
-- RAG
-- Grounded
-- Streaming
+Postman and Open Collection request collections.
 
-#### Properties
+- [Contextual AI Platform API](https://apis.io/collections/contextual-ai/open-contextual-ai/)
+- [Contextual AI Platform Agents API](https://apis.io/collections/contextual-ai/open-contextual-ai-agents-api/)
+- [Contextual AI Platform Agents Agents Query API](https://apis.io/collections/contextual-ai/open-contextual-ai-agents-query-api/)
+- [Contextual AI Platform Agents Datastores API](https://apis.io/collections/contextual-ai/open-contextual-ai-datastores-api/)
+- [Contextual AI Platform Agents Documents API](https://apis.io/collections/contextual-ai/open-contextual-ai-documents-api/)
+- [Contextual AI Platform Agents Generate API](https://apis.io/collections/contextual-ai/open-contextual-ai-generate-api/)
+- [Contextual AI Platform Agents LMUnit API](https://apis.io/collections/contextual-ai/open-contextual-ai-lmunit-api/)
+- [Contextual AI Platform Agents Parse API](https://apis.io/collections/contextual-ai/open-contextual-ai-parse-api/)
+- [Contextual AI Platform Agents Rerank API](https://apis.io/collections/contextual-ai/open-contextual-ai-rerank-api/)
+- [Contextual AI Platform Agents Users API](https://apis.io/collections/contextual-ai/open-contextual-ai-users-api/)
 
-- [Documentation](https://docs.contextual.ai/api-reference/agents-query/query)
-- [API Reference](https://docs.contextual.ai/api-reference/agents-query/query)
-- [OpenAPI](openapi/contextual-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [AsyncAPI](asyncapi/contextual-ai-asyncapi.yml) — [AsyncAPI Specification](https://www.asyncapi.com/docs/reference/specification/latest)
-- [Postman Collection](collections/contextual-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/contextual-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Governance rules (1)
 
-### Contextual AI Datastores & Documents API
+Spectral rulesets for the provider's contracts.
 
-Create and manage datastores and ingest documents (PDF, HTML, DOC(X), PPT(X), images) with custom metadata; list, retrieve, update, and delete documents and their parsed chunks.
+- [Contextual AI — asyncapi rules](https://apis.io/rules/contextual-ai/contextual-ai-asyncapi-spectral-rules/)
 
-- **Human URL:** [https://docs.contextual.ai/api-reference/datastores/create-datastore](https://docs.contextual.ai/api-reference/datastores/create-datastore)
-- **Base URL:** `https://api.contextual.ai/v1`
+#### Security (4)
 
-#### Tags
+Authentication, trust centre, and vulnerability disclosure.
 
-- Datastores
-- Documents
-- Ingestion
+- [Contextual Ai Authentication](https://apis.io/security/contextual-ai/contextual-ai-authentication/)
+- [Contextual Ai Domain Security](https://apis.io/security/contextual-ai/contextual-ai-domain-security/)
+- [Contextual Ai Trust Center](https://apis.io/security/contextual-ai/contextual-ai-trust-center/)
+- [Contextual Ai Vulnerability Disclosure](https://apis.io/security/contextual-ai/contextual-ai-vulnerability-disclosure/)
 
-#### Properties
+#### Plans and pricing (1)
 
-- [Documentation](https://docs.contextual.ai/api-reference/datastores/create-datastore)
-- [API Reference](https://docs.contextual.ai/api-reference/datastores-documents/ingest-document)
-- [OpenAPI](openapi/contextual-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/contextual-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/contextual-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Published plans, tiers and prices.
 
-### Contextual AI Generate API
+- [Contextual Ai Plans Pricing](https://apis.io/plans/contextual-ai/contextual-ai-plans-pricing/)
 
-Standalone grounded generation with the Grounded Language Model (GLM v1/v2) - responses are grounded in supplied knowledge to minimize hallucinations, with a 32,000-token request limit.
+#### Rate limits (1)
 
-- **Human URL:** [https://docs.contextual.ai/api-reference/generate/generate](https://docs.contextual.ai/api-reference/generate/generate)
-- **Base URL:** `https://api.contextual.ai/v1`
+Published request limits.
 
-#### Tags
+- [Contextual Ai Rate Limits](https://apis.io/rate-limits/contextual-ai/contextual-ai-rate-limits/)
 
-- Generate
-- Grounded Language Model
-- Generation
+#### FinOps (1)
 
-#### Properties
+What the API costs to run, by operation.
 
-- [Documentation](https://docs.contextual.ai/api-reference/generate/generate)
-- [API Reference](https://docs.contextual.ai/api-reference/generate/generate)
-- [OpenAPI](openapi/contextual-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/contextual-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/contextual-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Contextual Ai Finops](https://apis.io/finops/contextual-ai/contextual-ai-finops/)
 
-### Contextual AI Rerank API
+## Where to find this API
 
-Instruction-following reranker (ctxl-rerank-v2 multilingual / mini and v1) that reorders retrieved passages by relevance, steerable with natural-language instructions on recency, document type, or source.
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-- **Human URL:** [https://docs.contextual.ai/api-reference/rerank/rerank](https://docs.contextual.ai/api-reference/rerank/rerank)
-- **Base URL:** `https://api.contextual.ai/v1`
-
-#### Tags
-
-- Rerank
-- Retrieval
-- Instruction Following
-
-#### Properties
-
-- [Documentation](https://docs.contextual.ai/how-to-guides/rerank)
-- [API Reference](https://docs.contextual.ai/api-reference/rerank/rerank)
-- [OpenAPI](openapi/contextual-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/contextual-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/contextual-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Contextual AI Parse API
-
-Asynchronous document parsing that converts PDFs, Office files, and images into AI-ready markdown with inferred hierarchy and positional metadata; submit a job, then poll status and results (basic text or standard multimodal).
-
-- **Human URL:** [https://docs.contextual.ai/api-reference/parse/parse-file](https://docs.contextual.ai/api-reference/parse/parse-file)
-- **Base URL:** `https://api.contextual.ai/v1`
-
-#### Tags
-
-- Parse
-- Document Parsing
-- OCR
-
-#### Properties
-
-- [Documentation](https://docs.contextual.ai/how-to-guides/parse)
-- [API Reference](https://docs.contextual.ai/api-reference/parse/parse-file)
-- [OpenAPI](openapi/contextual-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/contextual-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/contextual-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Contextual AI LMUnit Evaluation API
-
-Evaluate model responses with fine-grained natural-language unit tests, returning a continuous 1-5 score for criteria such as conciseness, technical precision, and groundedness.
-
-- **Human URL:** [https://docs.contextual.ai/api-reference/lmunit/lmunit](https://docs.contextual.ai/api-reference/lmunit/lmunit)
-- **Base URL:** `https://api.contextual.ai/v1`
-
-#### Tags
-
-- LMUnit
-- Evaluation
-- Unit Testing
-
-#### Properties
-
-- [Documentation](https://docs.contextual.ai/how-to-guides/lmunit)
-- [API Reference](https://docs.contextual.ai/api-reference/lmunit/lmunit)
-- [OpenAPI](openapi/contextual-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/contextual-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/contextual-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [GitHub Organization](https://github.com/ContextualAI)
-- [LinkedIn](https://www.linkedin.com/company/contextual-ai)
 - [Website](https://contextual.ai/)
 - [Documentation](https://docs.contextual.ai)
-- [Plans](plans/contextual-ai-plans-pricing.yml)
-- [Rate Limits](rate-limits/contextual-ai-rate-limits.yml)
-- [Fin Ops](finops/contextual-ai-finops.yml)
+- [Pricing](https://contextual.ai/pricing)
+- [Blog](https://contextual.ai/blog)
+- [GitHub](https://github.com/ContextualAI)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 41.4** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 58.0 |
+| Contract governance | 11.4 |
+| Operational transparency | 21.1 |
+| Developer ergonomics | 32.1 |
+| Access clarity | 50.0 |
+
+**Agent readiness 20.7** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 20.9** — AI & Biometrics
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/contextual-ai/](https://apis.io/providers/contextual-ai/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Contextual AI: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/contextual-ai/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
